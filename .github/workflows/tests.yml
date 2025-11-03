@@ -1,0 +1,32 @@
+name: Test Formulas
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: macos-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Set up Homebrew
+      uses: Homebrew/actions/setup-homebrew@master
+      
+    - name: Test formulas
+      run: |
+        for formula in Formula/*.rb; do
+          if [ -f "$formula" ]; then
+            brew audit --strict --online "$formula"
+          fi
+        done
+        
+    - name: Test tap installation
+      run: |
+        brew tap stuffbucket/tap $(pwd)
+        brew search stuffbucket/tap/
+        brew untap stuffbucket/tap
