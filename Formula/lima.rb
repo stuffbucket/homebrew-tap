@@ -13,7 +13,7 @@ class Lima < Formula
   end
 
   def install
-    system "make", "native"
+    system "make", "native", "VERSION=#{version}"
     bin.install Dir["_output/bin/*"]
     share.install Dir["_output/share/*"]
     generate_completions_from_executable(bin/"limactl", "completion")
