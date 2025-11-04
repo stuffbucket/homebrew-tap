@@ -1,9 +1,8 @@
 class Lima < Formula
   desc "Linux virtual machines with GUI desktop support via VZ"
   homepage "https://lima-vm.io/"
-  url "https://github.com/stuffbucket/lima/archive/refs/tags/v1.0.0.tar.gz"
-  version "1.0.0-fork"
-  sha256 "f0692f34524542fc882a7d81dabe420a72c344d94091a05a15aa3d64acddf588"
+  url "https://github.com/stuffbucket/lima/archive/refs/tags/v2.0.0-beta.0-fork.tar.gz"
+  sha256 "b763786b941b220847f1c82f36dfbf40a846401e9dd43488885b4a2e56859894"
   license "Apache-2.0"
   head "https://github.com/stuffbucket/lima.git", branch: "master"
 
@@ -14,7 +13,7 @@ class Lima < Formula
   end
 
   def install
-    system "make", "native", "VERSION=2.0.0-beta.0-fork"
+    system "make", "native"
     bin.install Dir["_output/bin/*"]
     share.install Dir["_output/share/*"]
     generate_completions_from_executable(bin/"limactl", "completion")
