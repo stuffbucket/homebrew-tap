@@ -51,6 +51,13 @@ class VscodeLima < Formula
     EOS
   end
 
+  def post_install
+    system bin/"vscode-lima-install"
+  rescue StandardError => e
+    opoo "Could not auto-install VS Code extension: #{e.message}"
+    opoo "Run 'vscode-lima-install' manually to install the extension."
+  end
+
   test do
     assert_predicate libexec/"lima-manager-#{version}.vsix", :exist?
     assert_predicate bin/"vscode-lima-install", :exist?
