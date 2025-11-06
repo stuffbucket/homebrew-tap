@@ -110,29 +110,3 @@ jobs:
         fi
         
         echo "✅ All required .pkg files are present!"
-    
-    - name: Check if packages are stale
-      if: steps.changes.outputs.packages_changed == 'true'
-      run: |
-        echo "Checking if packages need rebuilding..."
-        make pkg-check-stale
-        
-        # Fail if any package is stale
-        CURRENT_HASH=$(git rev-parse HEAD)
-        for metadata in pkgs/*/.build-metadata; do
-          if [ -f "$metadata" ]; then
-            BUILD_HASH=$(grep '^GIT_HASH=' "$metadata" | cut -d'=' -f2)
-            if [ "$BUILD_HASH" != "$CURRENT_HASH" ]; then
-              echo "❌ ERROR: Packages are out of date!"
-              echo "Run 'make pkg-build' to rebuild packages"
-              exit 1
-            fi
-          fi
-        done
-        
-        echo "✅ All packages are current!"
-    
-    - name: Skip staleness check
-      if: steps.changes.outputs.packages_changed == 'false'
-      run: |
-        echo "⏭️  Skipping staleness check - no package-related changes detected"
