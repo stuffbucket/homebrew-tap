@@ -186,9 +186,7 @@ class QemuSpice < Formula
     assert_match "virtio-vga-gl", shell_output("#{bin}/qemu-system-x86_64 -device help")
     assert_match "virtio-gpu-gl", shell_output("#{bin}/qemu-system-aarch64 -device help")
 
-    if OS.mac? && Hardware::CPU.arm?
-      assert_match "hvf", shell_output("#{bin}/qemu-system-aarch64 -accel help")
-    end
+    assert_match "hvf", shell_output("#{bin}/qemu-system-aarch64 -accel help") if OS.mac? && Hardware::CPU.arm?
 
     system "#{bin}/qemu-img", "create", "-f", "qcow2", "#{testpath}/test.qcow2", "1M"
   end

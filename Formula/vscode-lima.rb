@@ -2,8 +2,6 @@ class VscodeLima < Formula
   desc "VS Code extension for managing Lima virtual machines"
   homepage "https://github.com/stuffbucket/vscode-lima"
   url "https://github.com/stuffbucket/vscode-lima/releases/download/v0.0.1/lima-manager-0.0.1.vsix"
-  sha256 "6d1d9a4a66cd30b86814c0c7299e043be6668f0456690513f4b1c03653be7a99"
-  version "0.0.1"
   license "MIT"
 
   depends_on "lima"
@@ -55,14 +53,14 @@ class VscodeLima < Formula
 
   def post_install
     system bin/"vscode-lima-install"
-  rescue StandardError => e
+  rescue => e
     opoo "Could not auto-install VS Code extension: #{e.message}"
     opoo "Run 'vscode-lima-install' manually to install the extension."
   end
 
   test do
-    assert_predicate libexec/"lima-manager-#{version}.vsix", :exist?
-    assert_predicate bin/"vscode-lima-install", :exist?
+    assert_path_exists libexec/"lima-manager-0.0.1.vsix"
+    assert_path_exists bin/"vscode-lima-install"
     assert_predicate bin/"vscode-lima-install", :executable?
   end
 end
