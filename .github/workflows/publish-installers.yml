@@ -22,15 +22,15 @@ jobs:
     - name: Build packages
       working-directory: homebrew-tap
       run: |
-        make pkg-sync-versions
         make pkg-build
     
     - name: Extract versions
       id: versions
       working-directory: homebrew-tap
       run: |
-        LIMA_VER=$(grep '^ *version' Formula/lima.rb | head -1 | cut -d'"' -f2)
-        VSCODE_VER=$(grep '^ *version' Formula/vscode-lima.rb | head -1 | cut -d'"' -f2)
+        brew tap stuffbucket/tap $(pwd)
+        LIMA_VER=$(brew info --json=v2 stuffbucket/tap/lima | jq -r '.formulae[0].versions.stable')
+        VSCODE_VER=$(brew info --json=v2 stuffbucket/tap/vscode-lima | jq -r '.formulae[0].versions.stable')
         echo "lima_version=${LIMA_VER}" >> $GITHUB_OUTPUT
         echo "vscode_version=${VSCODE_VER}" >> $GITHUB_OUTPUT
         echo "homebrew_version=1.0.0" >> $GITHUB_OUTPUT
@@ -71,18 +71,41 @@ jobs:
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
         git add macos/
-        git commit -m "Update macOS installers
+        
+        # Check if there are changes to commit
+        if git diff --staged --quiet; then
+          echo "No changes to commit, checking if tag exists..."
+          if git rev-parse "${TAG}" >/dev/null 2>&1; then
+            echo "Tag ${TAG} already exists, skipping tag creation"
+            echo "tag_exists=true" >> $GITHUB_ENV
+            exit 0
+          fi
+        fi
+        
+        # Commit changes if any
+        if ! git diff --staged --quiet; then
+          git commit -m "Update macOS installers
 
         - Lima: ${{ steps.versions.outputs.lima_version }}
         - VS Code Lima: ${{ steps.versions.outputs.vscode_version }}
         - Homebrew: ${{ steps.versions.outputs.homebrew_version }}
 
         Source: stuffbucket/homebrew-tap@${{ github.sha }}"
-        git tag -a "${TAG}" -m "Release ${TAG}"
-        git push origin main
-        git push origin "${TAG}"
+          git push origin main
+        fi
+        
+        # Create tag if it doesn't exist
+        if ! git rev-parse "${TAG}" >/dev/null 2>&1; then
+          git tag -a "${TAG}" -m "Release ${TAG}"
+          git push origin "${TAG}"
+          echo "tag_exists=false" >> $GITHUB_ENV
+        else
+          echo "Tag ${TAG} already exists"
+          echo "tag_exists=true" >> $GITHUB_ENV
+        fi
     
     - name: Create GitHub Release
+      if: env.tag_exists != 'true'
       uses: softprops/action-gh-release@v1
       with:
         repository: stuffbucket/installers

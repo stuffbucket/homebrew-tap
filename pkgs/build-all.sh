@@ -27,6 +27,6 @@ echo ""
 echo "All packages built successfully!"
 echo ""
 echo "Packages:"
-echo "  - ${SCRIPT_DIR}/homebrew/stuffbucket-homebrew-1.0.0.pkg"
-echo "  - ${SCRIPT_DIR}/lima/stuffbucket-lima-2.0.0.pkg"
-echo "  - ${SCRIPT_DIR}/vscode-lima/stuffbucket-vscode-lima-0.0.1.pkg"
+find "${SCRIPT_DIR}" -name "stuffbucket-*.pkg" -not -path "*/build/*" | while read pkg; do
+    echo "  - ${pkg}"
+done

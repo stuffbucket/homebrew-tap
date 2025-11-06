@@ -19,8 +19,12 @@ jobs:
       
     - name: Tap repository
       run: |
-        # Remove tap if it exists, then tap from local checkout
+        # Remove tap if it exists to avoid directory conflicts
         brew untap stuffbucket/tap 2>/dev/null || true
+        rm -rf /opt/homebrew/Library/Taps/stuffbucket/homebrew-tap 2>/dev/null || true
+        rm -rf /usr/local/Homebrew/Library/Taps/stuffbucket/homebrew-tap 2>/dev/null || true
+        
+        # Tap from local checkout
         brew tap stuffbucket/tap $(pwd)
         
     - name: Test formulas
@@ -54,59 +58,19 @@ jobs:
           echo "packages_changed=false" >> $GITHUB_OUTPUT
         fi
         
-    - name: Check package versions are synced
+    - name: Check package versions
       run: |
-        echo "Checking if package versions match formula versions..."
+        echo "Package versions are queried dynamically from brew."
         make pkg-check-versions
-        
-        # Exit with error if versions don't match
-        LIMA_FORMULA_VER=$(grep '^ *version' Formula/lima.rb | head -1 | cut -d'"' -f2)
-        LIMA_BUILD_VER=$(grep 'version "' pkgs/lima/build.sh | head -1 | cut -d'"' -f2)
-        
-        VSCODE_FORMULA_VER=$(grep '^ *url' Formula/vscode-lima.rb | grep -o 'v[0-9][^/]*' | sed 's/^v//' | head -1)
-        VSCODE_BUILD_VER=$(grep 'version "' pkgs/vscode-lima/build.sh | head -1 | cut -d'"' -f2)
-        
-        if [ "$LIMA_FORMULA_VER" != "$LIMA_BUILD_VER" ]; then
-          echo "❌ ERROR: Lima version mismatch!"
-          echo "  Formula: $LIMA_FORMULA_VER"
-          echo "  Package: $LIMA_BUILD_VER"
-          echo ""
-          echo "Run 'make pkg-sync-versions' to fix."
-          exit 1
-        fi
-        
-        if [ "$VSCODE_FORMULA_VER" != "$VSCODE_BUILD_VER" ]; then
-          echo "❌ ERROR: VS Code Lima version mismatch!"
-          echo "  Formula: $VSCODE_FORMULA_VER"
-          echo "  Package: $VSCODE_BUILD_VER"
-          echo ""
-          echo "Run 'make pkg-sync-versions' to fix."
-          exit 1
-        fi
-        
-        echo "✅ All package versions are in sync!"
     
-    - name: Verify packages exist
+    - name: Verify packages can be built
       run: |
-        echo "Checking that .pkg files are committed..."
+        echo "Testing package build process..."
+        make pkg-build
         
-        if [ ! -f "pkgs/homebrew/stuffbucket-homebrew-1.0.0.pkg" ]; then
-          echo "❌ ERROR: Homebrew package not found"
-          exit 1
-        fi
+        # Verify the built packages exist
+        ls -lh pkgs/homebrew/*.pkg
+        ls -lh pkgs/lima/*.pkg
+        ls -lh pkgs/vscode-lima/*.pkg
         
-        LIMA_VER=$(grep '^ *version' Formula/lima.rb | head -1 | cut -d'"' -f2)
-        if [ ! -f "pkgs/lima/stuffbucket-lima-${LIMA_VER}.pkg" ]; then
-          echo "❌ ERROR: Lima package for version ${LIMA_VER} not found"
-          echo "Run 'make pkg-build' to build packages"
-          exit 1
-        fi
-        
-        VSCODE_VER=$(grep '^ *url' Formula/vscode-lima.rb | grep -o 'v[0-9][^/]*' | sed 's/^v//' | head -1)
-        if [ ! -f "pkgs/vscode-lima/stuffbucket-vscode-lima-${VSCODE_VER}.pkg" ]; then
-          echo "❌ ERROR: VS Code Lima package for version ${VSCODE_VER} not found"
-          echo "Run 'make pkg-build' to build packages"
-          exit 1
-        fi
-        
-        echo "✅ All required .pkg files are present!"
+        echo "✅ All packages built successfully!"

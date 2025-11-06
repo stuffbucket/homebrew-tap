@@ -8,11 +8,20 @@ SCRIPTS_DIR="${BUILD_DIR}/scripts"
 
 echo "Building VS Code Lima installer package..."
 
-# Extract version from Formula URL
-VERSION=$(grep '^ *url' "${SCRIPT_DIR}/../../Formula/vscode-lima.rb" | grep -o 'v[0-9][^/]*' | sed 's/^v//' | head -1)
-if [ -z "${VERSION}" ]; then
-  echo "Error: Could not extract version from Formula/vscode-lima.rb"
-  exit 1
+# Query version from brew (single source of truth)
+if ! command -v brew &> /dev/null; then
+    echo "Error: Homebrew not found. Please install Homebrew first."
+    exit 1
+fi
+
+# Tap the local repo
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || echo "${SCRIPT_DIR}/../..")"
+brew tap stuffbucket/tap "${REPO_ROOT}" 2>/dev/null || true
+
+VERSION=$(brew info --json=v2 stuffbucket/tap/vscode-lima | jq -r '.formulae[0].versions.stable')
+if [ -z "${VERSION}" ] || [ "${VERSION}" = "null" ]; then
+    echo "Error: Could not determine vscode-lima version from brew"
+    exit 1
 fi
 echo "Version: ${VERSION}"
 
@@ -44,7 +53,7 @@ EOF
 pkgbuild --root "${ROOT_DIR}" \
          --scripts "${SCRIPTS_DIR}" \
          --identifier "com.stuffbucket.vscode-lima" \
-         --version "0.0.1" \
+         --version "${VERSION}" \
          --install-location "/" \
          "${BUILD_DIR}/vscode-lima.pkg"
 
@@ -52,7 +61,7 @@ pkgbuild --root "${ROOT_DIR}" \
 productbuild --distribution "${SCRIPT_DIR}/distribution.xml" \
              --resources "${SCRIPT_DIR}" \
              --package-path "${BUILD_DIR}" \
-             --version "0.0.1" \
-             "${SCRIPT_DIR}/stuffbucket-vscode-lima-0.0.1.pkg"
+             --version "${VERSION}" \
+             "${SCRIPT_DIR}/stuffbucket-vscode-lima-${VERSION}.pkg"
 
-echo "Package built: ${SCRIPT_DIR}/stuffbucket-vscode-lima-0.0.1.pkg"
+echo "Package built: ${SCRIPT_DIR}/stuffbucket-vscode-lima-${VERSION}.pkg"

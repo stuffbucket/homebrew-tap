@@ -8,11 +8,20 @@ SCRIPTS_DIR="${BUILD_DIR}/scripts"
 
 echo "Building Lima installer package..."
 
-# Extract version from Formula
-VERSION=$(grep '^ *version' "${SCRIPT_DIR}/../../Formula/lima.rb" | head -1 | cut -d'"' -f2)
-if [ -z "${VERSION}" ]; then
-  echo "Error: Could not extract version from Formula/lima.rb"
-  exit 1
+# Query version from brew (single source of truth)
+if ! command -v brew &> /dev/null; then
+    echo "Error: Homebrew not found. Please install Homebrew first."
+    exit 1
+fi
+
+# Tap the local repo
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || echo "${SCRIPT_DIR}/../..")"
+brew tap stuffbucket/tap "${REPO_ROOT}" 2>/dev/null || true
+
+VERSION=$(brew info --json=v2 stuffbucket/tap/lima | jq -r '.formulae[0].versions.stable')
+if [ -z "${VERSION}" ] || [ "${VERSION}" = "null" ]; then
+    echo "Error: Could not determine lima version from brew"
+    exit 1
 fi
 echo "Version: ${VERSION}"
 
@@ -44,7 +53,7 @@ EOF
 pkgbuild --root "${ROOT_DIR}" \
          --scripts "${SCRIPTS_DIR}" \
          --identifier "com.stuffbucket.lima" \
-         --version "2.0.0-beta.0.1" \
+         --version "${VERSION}" \
          --install-location "/" \
          "${BUILD_DIR}/lima.pkg"
 
@@ -52,7 +61,7 @@ pkgbuild --root "${ROOT_DIR}" \
 productbuild --distribution "${SCRIPT_DIR}/distribution.xml" \
              --resources "${SCRIPT_DIR}" \
              --package-path "${BUILD_DIR}" \
-             --version "2.0.0-beta.0.1" \
-             "${SCRIPT_DIR}/stuffbucket-lima-2.0.0-beta.0.1.pkg"
+             --version "${VERSION}" \
+             "${SCRIPT_DIR}/stuffbucket-lima-${VERSION}.pkg"
 
-echo "Package built: ${SCRIPT_DIR}/stuffbucket-lima-2.0.0-beta.0.1.pkg"
+echo "Package built: ${SCRIPT_DIR}/stuffbucket-lima-${VERSION}.pkg"

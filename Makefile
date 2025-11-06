@@ -143,57 +143,24 @@ update: check-tag
 	fi
 
 pkg-check-versions:
-	@echo "Package Version Check:"
-	@echo "======================"
+	@echo "Current Versions (from brew):"
+	@echo "============================="
 	@echo ""
-	@# Check lima
-	@LIMA_FORMULA_VER=$$(grep -E '^\s*version\s+"' Formula/lima.rb | head -1 | sed 's/.*"\(.*\)".*/\1/'); \
-	LIMA_PKG_VER=$$(grep -E '\-\-version\s+"' pkgs/lima/build.sh | head -1 | sed 's/.*"\(.*\)".*/\1/'); \
-	echo "lima:"; \
-	echo "  Formula version: $$LIMA_FORMULA_VER"; \
-	echo "  Package version: $$LIMA_PKG_VER"; \
-	if [ "$$LIMA_FORMULA_VER" != "$$LIMA_PKG_VER" ]; then \
-		echo "  ⚠️  MISMATCH DETECTED"; \
-	else \
-		echo "  ✓ Versions match"; \
-	fi; \
-	echo ""
-	@# Check vscode-lima
-	@VSCODE_FORMULA_VER=$$(grep '^ *url' Formula/vscode-lima.rb | grep -o 'v[0-9][^/]*' | sed 's/^v//' | head -1); \
-	VSCODE_PKG_VER=$$(grep -E '\-\-version\s+"' pkgs/vscode-lima/build.sh | head -1 | sed 's/.*"\(.*\)".*/\1/'); \
-	echo "vscode-lima:"; \
-	echo "  Formula version: $$VSCODE_FORMULA_VER"; \
-	echo "  Package version: $$VSCODE_PKG_VER"; \
-	if [ "$$VSCODE_FORMULA_VER" != "$$VSCODE_PKG_VER" ]; then \
-		echo "  ⚠️  MISMATCH DETECTED"; \
-	else \
-		echo "  ✓ Versions match"; \
-	fi; \
-	echo ""
+	@brew tap stuffbucket/tap $$(pwd) 2>/dev/null || true
+	@echo "lima:"
+	@brew info --json=v2 stuffbucket/tap/lima | jq -r '.formulae[0].versions.stable' | sed 's/^/  Version: /'
+	@echo ""
+	@echo "vscode-lima:"
+	@brew info --json=v2 stuffbucket/tap/vscode-lima | jq -r '.formulae[0].versions.stable' | sed 's/^/  Version: /'
+	@echo ""
+	@echo "Note: Build scripts query brew dynamically at build time."
 	@echo "Note: stuffbucket-homebrew package is tap-only (version 1.0.0 is static)"
 
 pkg-sync-versions:
-	@echo "Syncing package versions to match formulas..."
+	@echo "Version sync is no longer needed."
+	@echo "Build scripts query brew dynamically at build time."
 	@echo ""
-	@# Sync lima
-	@LIMA_VER=$$(grep -E '^\s*version\s+"' Formula/lima.rb | head -1 | sed 's/.*"\(.*\)".*/\1/'); \
-	echo "Updating lima package to $$LIMA_VER..."; \
-	sed -i '' "s/--version \"[^\"]*\"/--version \"$$LIMA_VER\"/" pkgs/lima/build.sh; \
-	sed -i '' "s/stuffbucket-lima-[0-9].*\.pkg/stuffbucket-lima-$$LIMA_VER.pkg/" pkgs/lima/build.sh; \
-	sed -i '' 's|<pkg-ref id="com.stuffbucket.lima" version="[^"]*"|<pkg-ref id="com.stuffbucket.lima" version="'"$$LIMA_VER"'"|' pkgs/lima/distribution.xml
-	@# Sync vscode-lima
-	@VSCODE_VER=$$(grep '^ *url' Formula/vscode-lima.rb | grep -o 'v[0-9][^/]*' | sed 's/^v//' | head -1); \
-	echo "Updating vscode-lima package to $$VSCODE_VER..."; \
-	sed -i '' "s/--version \"[^\"]*\"/--version \"$$VSCODE_VER\"/" pkgs/vscode-lima/build.sh; \
-	sed -i '' "s/stuffbucket-vscode-lima-[^\"]*\.pkg/stuffbucket-vscode-lima-$$VSCODE_VER.pkg/" pkgs/vscode-lima/build.sh; \
-	sed -i '' 's|<pkg-ref id="com.stuffbucket.vscode-lima" version="[^"]*"|<pkg-ref id="com.stuffbucket.vscode-lima" version="'"$$VSCODE_VER"'"|' pkgs/vscode-lima/distribution.xml
-	@echo ""
-	@echo "✓ Package versions synced"
-	@echo ""
-	@echo "Changes:"
-	@git diff pkgs/
-	@echo ""
-	@echo "Run 'make pkg-build' to rebuild packages with new versions"
+	@echo "To see current versions, run: make pkg-check-versions"
 
 pkg-check-stale:
 	@echo "Checking if packages are stale..."
