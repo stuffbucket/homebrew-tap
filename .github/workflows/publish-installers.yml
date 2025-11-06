@@ -11,7 +11,7 @@ on:
 
 jobs:
   build-and-publish:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     
     steps:
     - name: Checkout homebrew-tap
@@ -19,10 +19,8 @@ jobs:
       with:
         path: homebrew-tap
     
-    - name: Build packages
-      working-directory: homebrew-tap
-      run: |
-        make pkg-build
+    - name: Set up Homebrew
+      uses: Homebrew/actions/setup-homebrew@master
     
     - name: Extract versions
       id: versions
@@ -34,6 +32,15 @@ jobs:
         echo "lima_version=${LIMA_VER}" >> $GITHUB_OUTPUT
         echo "vscode_version=${VSCODE_VER}" >> $GITHUB_OUTPUT
         echo "homebrew_version=1.0.0" >> $GITHUB_OUTPUT
+    
+    - name: Verify packages exist
+      working-directory: homebrew-tap
+      run: |
+        echo "Verifying pre-built packages..."
+        ls -lh pkgs/homebrew/stuffbucket-homebrew-*.pkg
+        ls -lh pkgs/lima/stuffbucket-lima-*.pkg
+        ls -lh pkgs/vscode-lima/stuffbucket-vscode-lima-*.pkg
+        echo "✅ All packages found"
     
     - name: Checkout installers repo
       uses: actions/checkout@v4
