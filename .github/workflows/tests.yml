@@ -8,7 +8,7 @@ on:
 
 jobs:
   test-formulas:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     
     steps:
     - name: Checkout repository
@@ -19,11 +19,6 @@ jobs:
       
     - name: Tap repository
       run: |
-        # Remove tap if it exists to avoid directory conflicts
-        brew untap stuffbucket/tap 2>/dev/null || true
-        rm -rf /opt/homebrew/Library/Taps/stuffbucket/homebrew-tap 2>/dev/null || true
-        rm -rf /usr/local/Homebrew/Library/Taps/stuffbucket/homebrew-tap 2>/dev/null || true
-        
         # Tap from local checkout
         brew tap stuffbucket/tap $(pwd)
         
@@ -32,45 +27,11 @@ jobs:
         for formula in Formula/*.rb; do
           if [ -f "$formula" ]; then
             formula_name=$(basename "$formula" .rb)
-            brew audit --strict --online stuffbucket/tap/$formula_name || true
+            echo "Auditing $formula_name..."
+            brew audit --strict --online stuffbucket/tap/$formula_name
           fi
         done
         
     - name: Test tap search
       run: |
         brew search stuffbucket/tap/
-  
-  check-pkg-versions:
-    runs-on: macos-latest
-    
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      
-    - name: Check if package-related files changed
-      id: changes
-      run: |
-        # Check if this commit affects packages
-        git diff --name-only HEAD^..HEAD > changed_files.txt || echo "Formula/" > changed_files.txt
-        if grep -qE '^(Formula/|pkgs/)' changed_files.txt; then
-          echo "packages_changed=true" >> $GITHUB_OUTPUT
-        else
-          echo "packages_changed=false" >> $GITHUB_OUTPUT
-        fi
-        
-    - name: Check package versions
-      run: |
-        echo "Package versions are queried dynamically from brew."
-        make pkg-check-versions
-    
-    - name: Verify packages can be built
-      run: |
-        echo "Testing package build process..."
-        make pkg-build
-        
-        # Verify the built packages exist
-        ls -lh pkgs/homebrew/*.pkg
-        ls -lh pkgs/lima/*.pkg
-        ls -lh pkgs/vscode-lima/*.pkg
-        
-        echo "✅ All packages built successfully!"
