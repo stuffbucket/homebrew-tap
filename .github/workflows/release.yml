@@ -11,7 +11,7 @@ on:
 
 jobs:
   attach-packages:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     permissions:
       contents: write
     
