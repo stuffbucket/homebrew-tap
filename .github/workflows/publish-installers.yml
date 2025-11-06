@@ -1,0 +1,116 @@
+name: Publish Installers
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'Formula/*.rb'
+      - 'pkgs/**'
+      - '.github/workflows/publish-installers.yml'
+  workflow_dispatch:
+
+jobs:
+  build-and-publish:
+    runs-on: macos-latest
+    
+    steps:
+    - name: Checkout homebrew-tap
+      uses: actions/checkout@v4
+      with:
+        path: homebrew-tap
+    
+    - name: Build packages
+      working-directory: homebrew-tap
+      run: |
+        make pkg-sync-versions
+        make pkg-build
+    
+    - name: Extract versions
+      id: versions
+      working-directory: homebrew-tap
+      run: |
+        LIMA_VER=$(grep '^ *version' Formula/lima.rb | head -1 | cut -d'"' -f2)
+        VSCODE_VER=$(grep '^ *version' Formula/vscode-lima.rb | head -1 | cut -d'"' -f2)
+        echo "lima_version=${LIMA_VER}" >> $GITHUB_OUTPUT
+        echo "vscode_version=${VSCODE_VER}" >> $GITHUB_OUTPUT
+        echo "homebrew_version=1.0.0" >> $GITHUB_OUTPUT
+    
+    - name: Checkout installers repo
+      uses: actions/checkout@v4
+      with:
+        repository: stuffbucket/installers
+        token: ${{ secrets.INSTALLERS_PAT }}
+        path: installers
+    
+    - name: Copy packages to installers repo
+      run: |
+        mkdir -p installers/macos
+        cp homebrew-tap/pkgs/homebrew/stuffbucket-homebrew-*.pkg installers/macos/
+        cp homebrew-tap/pkgs/lima/stuffbucket-lima-*.pkg installers/macos/
+        cp homebrew-tap/pkgs/vscode-lima/stuffbucket-vscode-lima-*.pkg installers/macos/
+        
+        # Generate checksums
+        cd installers/macos
+        shasum -a 256 *.pkg > SHA256SUMS
+        
+        # Create version manifest
+        cat > versions.json <<EOF
+        {
+          "homebrew": "${{ steps.versions.outputs.homebrew_version }}",
+          "lima": "${{ steps.versions.outputs.lima_version }}",
+          "vscode-lima": "${{ steps.versions.outputs.vscode_version }}",
+          "updated": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+          "commit": "${{ github.sha }}"
+        }
+        EOF
+    
+    - name: Create release tag
+      working-directory: installers
+      run: |
+        TAG="lima-v${{ steps.versions.outputs.lima_version }}"
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add macos/
+        git commit -m "Update macOS installers
+
+        - Lima: ${{ steps.versions.outputs.lima_version }}
+        - VS Code Lima: ${{ steps.versions.outputs.vscode_version }}
+        - Homebrew: ${{ steps.versions.outputs.homebrew_version }}
+
+        Source: stuffbucket/homebrew-tap@${{ github.sha }}"
+        git tag -a "${TAG}" -m "Release ${TAG}"
+        git push origin main
+        git push origin "${TAG}"
+    
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        repository: stuffbucket/installers
+        tag_name: lima-v${{ steps.versions.outputs.lima_version }}
+        name: Lima ${{ steps.versions.outputs.lima_version }}
+        body: |
+          # macOS Installer Packages
+          
+          ## What's Included
+          - **stuffbucket-homebrew-1.0.0.pkg** - Homebrew tap setup
+          - **stuffbucket-lima-${{ steps.versions.outputs.lima_version }}.pkg** - Lima virtual machines
+          - **stuffbucket-vscode-lima-${{ steps.versions.outputs.vscode_version }}.pkg** - VS Code extension
+          
+          ## Installation
+          
+          Install in order:
+          1. Homebrew package (sets up tap)
+          2. Lima package
+          3. VS Code Lima package (optional)
+          
+          ## Checksums
+          
+          See `SHA256SUMS` file for package verification.
+          
+          ---
+          Built from: stuffbucket/homebrew-tap@${{ github.sha }}
+        files: |
+          installers/macos/*.pkg
+          installers/macos/SHA256SUMS
+          installers/macos/versions.json
+        token: ${{ secrets.INSTALLERS_PAT }}
