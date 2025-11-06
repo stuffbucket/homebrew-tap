@@ -41,6 +41,7 @@ jobs:
         repository: stuffbucket/installers
         token: ${{ secrets.INSTALLERS_PAT }}
         path: installers
+        fetch-depth: 0  # Fetch all history including tags
     
     - name: Copy packages to installers repo
       run: |
@@ -70,20 +71,25 @@ jobs:
         TAG="lima-v${{ steps.versions.outputs.lima_version }}"
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
+        
+        # Fetch all tags to check if tag exists remotely
+        git fetch --tags
+        
+        # Check if tag exists (local or remote)
+        if git rev-parse "${TAG}" >/dev/null 2>&1; then
+          echo "Tag ${TAG} already exists, skipping release"
+          echo "tag_exists=true" >> $GITHUB_ENV
+          exit 0
+        fi
+        
+        # Add package files
         git add macos/
         
         # Check if there are changes to commit
         if git diff --staged --quiet; then
-          echo "No changes to commit, checking if tag exists..."
-          if git rev-parse "${TAG}" >/dev/null 2>&1; then
-            echo "Tag ${TAG} already exists, skipping tag creation"
-            echo "tag_exists=true" >> $GITHUB_ENV
-            exit 0
-          fi
-        fi
-        
-        # Commit changes if any
-        if ! git diff --staged --quiet; then
+          echo "No changes to commit, but no tag exists - will create tag on current HEAD"
+        else
+          # Commit changes
           git commit -m "Update macOS installers
 
         - Lima: ${{ steps.versions.outputs.lima_version }}
@@ -94,15 +100,10 @@ jobs:
           git push origin main
         fi
         
-        # Create tag if it doesn't exist
-        if ! git rev-parse "${TAG}" >/dev/null 2>&1; then
-          git tag -a "${TAG}" -m "Release ${TAG}"
-          git push origin "${TAG}"
-          echo "tag_exists=false" >> $GITHUB_ENV
-        else
-          echo "Tag ${TAG} already exists"
-          echo "tag_exists=true" >> $GITHUB_ENV
-        fi
+        # Create and push tag
+        git tag -a "${TAG}" -m "Release ${TAG}"
+        git push origin "${TAG}"
+        echo "tag_exists=false" >> $GITHUB_ENV
     
     - name: Create GitHub Release
       if: env.tag_exists != 'true'
