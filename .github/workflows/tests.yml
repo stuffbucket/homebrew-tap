@@ -39,11 +39,6 @@ jobs:
     - name: Test tap search
       run: |
         brew search stuffbucket/tap/
-    
-    - name: Cleanup tap
-      if: always()
-      run: |
-        brew untap stuffbucket/tap 2>/dev/null || true
   
   check-pkg-versions:
     runs-on: macos-latest
@@ -79,8 +74,3 @@ jobs:
         ls -lh pkgs/vscode-lima/*.pkg
         
         echo "✅ All packages built successfully!"
-    
-    - name: Cleanup tap
-      if: always()
-      run: |
-        brew untap stuffbucket/tap 2>/dev/null || true
