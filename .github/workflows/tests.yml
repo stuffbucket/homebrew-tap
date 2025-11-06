@@ -63,7 +63,7 @@ jobs:
         LIMA_FORMULA_VER=$(grep '^ *version' Formula/lima.rb | head -1 | cut -d'"' -f2)
         LIMA_BUILD_VER=$(grep 'version "' pkgs/lima/build.sh | head -1 | cut -d'"' -f2)
         
-        VSCODE_FORMULA_VER=$(grep '^ *version' Formula/vscode-lima.rb | head -1 | cut -d'"' -f2)
+        VSCODE_FORMULA_VER=$(grep '^ *url' Formula/vscode-lima.rb | grep -o 'v[0-9][^/]*' | sed 's/^v//' | head -1)
         VSCODE_BUILD_VER=$(grep 'version "' pkgs/vscode-lima/build.sh | head -1 | cut -d'"' -f2)
         
         if [ "$LIMA_FORMULA_VER" != "$LIMA_BUILD_VER" ]; then
@@ -102,7 +102,7 @@ jobs:
           exit 1
         fi
         
-        VSCODE_VER=$(grep '^ *version' Formula/vscode-lima.rb | head -1 | cut -d'"' -f2)
+        VSCODE_VER=$(grep '^ *url' Formula/vscode-lima.rb | grep -o 'v[0-9][^/]*' | sed 's/^v//' | head -1)
         if [ ! -f "pkgs/vscode-lima/stuffbucket-vscode-lima-${VSCODE_VER}.pkg" ]; then
           echo "❌ ERROR: VS Code Lima package for version ${VSCODE_VER} not found"
           echo "Run 'make pkg-build' to build packages"

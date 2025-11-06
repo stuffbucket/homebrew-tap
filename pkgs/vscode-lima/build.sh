@@ -8,8 +8,8 @@ SCRIPTS_DIR="${BUILD_DIR}/scripts"
 
 echo "Building VS Code Lima installer package..."
 
-# Extract version from Formula
-VERSION=$(grep '^ *version' "${SCRIPT_DIR}/../../Formula/vscode-lima.rb" | head -1 | cut -d'"' -f2)
+# Extract version from Formula URL
+VERSION=$(grep '^ *url' "${SCRIPT_DIR}/../../Formula/vscode-lima.rb" | grep -o 'v[0-9][^/]*' | sed 's/^v//' | head -1)
 if [ -z "${VERSION}" ]; then
   echo "Error: Could not extract version from Formula/vscode-lima.rb"
   exit 1

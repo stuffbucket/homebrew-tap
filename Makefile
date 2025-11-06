@@ -159,7 +159,7 @@ pkg-check-versions:
 	fi; \
 	echo ""
 	@# Check vscode-lima
-	@VSCODE_FORMULA_VER=$$(grep -E '^\s*version\s+"' Formula/vscode-lima.rb | head -1 | sed 's/.*"\(.*\)".*/\1/'); \
+	@VSCODE_FORMULA_VER=$$(grep '^ *url' Formula/vscode-lima.rb | grep -o 'v[0-9][^/]*' | sed 's/^v//' | head -1); \
 	VSCODE_PKG_VER=$$(grep -E '\-\-version\s+"' pkgs/vscode-lima/build.sh | head -1 | sed 's/.*"\(.*\)".*/\1/'); \
 	echo "vscode-lima:"; \
 	echo "  Formula version: $$VSCODE_FORMULA_VER"; \
@@ -182,10 +182,10 @@ pkg-sync-versions:
 	sed -i '' "s/stuffbucket-lima-[0-9].*\.pkg/stuffbucket-lima-$$LIMA_VER.pkg/" pkgs/lima/build.sh; \
 	sed -i '' 's|<pkg-ref id="com.stuffbucket.lima" version="[^"]*"|<pkg-ref id="com.stuffbucket.lima" version="'"$$LIMA_VER"'"|' pkgs/lima/distribution.xml
 	@# Sync vscode-lima
-	@VSCODE_VER=$$(grep -E '^\s*version\s+"' Formula/vscode-lima.rb | head -1 | sed 's/.*"\(.*\)".*/\1/'); \
+	@VSCODE_VER=$$(grep '^ *url' Formula/vscode-lima.rb | grep -o 'v[0-9][^/]*' | sed 's/^v//' | head -1); \
 	echo "Updating vscode-lima package to $$VSCODE_VER..."; \
 	sed -i '' "s/--version \"[^\"]*\"/--version \"$$VSCODE_VER\"/" pkgs/vscode-lima/build.sh; \
-	sed -i '' "s/stuffbucket-vscode-lima-[0-9].*\.pkg/stuffbucket-vscode-lima-$$VSCODE_VER.pkg/" pkgs/vscode-lima/build.sh; \
+	sed -i '' "s/stuffbucket-vscode-lima-[^\"]*\.pkg/stuffbucket-vscode-lima-$$VSCODE_VER.pkg/" pkgs/vscode-lima/build.sh; \
 	sed -i '' 's|<pkg-ref id="com.stuffbucket.vscode-lima" version="[^"]*"|<pkg-ref id="com.stuffbucket.vscode-lima" version="'"$$VSCODE_VER"'"|' pkgs/vscode-lima/distribution.xml
 	@echo ""
 	@echo "✓ Package versions synced"
