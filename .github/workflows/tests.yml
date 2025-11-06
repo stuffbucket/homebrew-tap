@@ -17,16 +17,19 @@ jobs:
     - name: Set up Homebrew
       uses: Homebrew/actions/setup-homebrew@master
       
+    - name: Tap repository
+      run: |
+        brew tap stuffbucket/tap $(pwd)
+        
     - name: Test formulas
       run: |
         for formula in Formula/*.rb; do
           if [ -f "$formula" ]; then
-            brew audit --strict --online "$formula"
+            formula_name=$(basename "$formula" .rb)
+            brew audit --strict --online stuffbucket/tap/$formula_name
           fi
         done
         
-    - name: Test tap installation
+    - name: Test tap search
       run: |
-        brew tap stuffbucket/tap $(pwd)
         brew search stuffbucket/tap/
-        brew untap stuffbucket/tap
