@@ -2,3 +2,4 @@
 
 # Package build artifacts
 pkgs/*/build/
+installers/
