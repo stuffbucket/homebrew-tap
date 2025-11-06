@@ -43,6 +43,17 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       
+    - name: Check if package-related files changed
+      id: changes
+      run: |
+        # Check if this commit affects packages
+        git diff --name-only HEAD^..HEAD > changed_files.txt || echo "Formula/" > changed_files.txt
+        if grep -qE '^(Formula/|pkgs/)' changed_files.txt; then
+          echo "packages_changed=true" >> $GITHUB_OUTPUT
+        else
+          echo "packages_changed=false" >> $GITHUB_OUTPUT
+        fi
+        
     - name: Check package versions are synced
       run: |
         echo "Checking if package versions match formula versions..."
@@ -101,6 +112,7 @@ jobs:
         echo "✅ All required .pkg files are present!"
     
     - name: Check if packages are stale
+      if: steps.changes.outputs.packages_changed == 'true'
       run: |
         echo "Checking if packages need rebuilding..."
         make pkg-check-stale
@@ -119,3 +131,8 @@ jobs:
         done
         
         echo "✅ All packages are current!"
+    
+    - name: Skip staleness check
+      if: steps.changes.outputs.packages_changed == 'false'
+      run: |
+        echo "⏭️  Skipping staleness check - no package-related changes detected"
