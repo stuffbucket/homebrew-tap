@@ -1,1 +1,4 @@
 .DS_Store
+
+# Package build artifacts
+pkgs/*/build/

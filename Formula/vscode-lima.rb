@@ -6,6 +6,8 @@ class VscodeLima < Formula
   version "0.0.1"
   license "MIT"
 
+  depends_on "lima"
+
   def install
     libexec.install "lima-manager-0.0.1.vsix"
 

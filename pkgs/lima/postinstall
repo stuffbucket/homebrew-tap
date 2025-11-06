@@ -1,0 +1,48 @@
+#!/bin/bash
+
+# Note: macOS installer scripts run as root, but Homebrew commands should run as the user
+# Get the actual user who invoked the installer (not root)
+ACTUAL_USER="${USER}"
+if [ "${ACTUAL_USER}" = "root" ]; then
+    ACTUAL_USER=$(stat -f "%Su" /dev/console)
+fi
+
+echo "Installing Lima for user: ${ACTUAL_USER}"
+
+# Determine Homebrew path
+# Use sysctl to get true architecture (not affected by Rosetta)
+ARCH=$(sysctl -n hw.optional.arm64 2>/dev/null)
+if [ "${ARCH}" = "1" ]; then
+    BREW_PREFIX="/opt/homebrew"
+else
+    BREW_PREFIX="/usr/local"
+fi
+
+# Check if Homebrew is installed
+if [ ! -x "${BREW_PREFIX}/bin/brew" ]; then
+    echo "Error: Homebrew not found at ${BREW_PREFIX}"
+    echo "Please install stuffbucket Homebrew package first."
+    exit 1
+fi
+
+echo "Installing Lima from stuffbucket tap..."
+
+# Run brew commands as the actual user, not root (non-interactively)
+# Tap stuffbucket repository if not already tapped
+if ! sudo -u "${ACTUAL_USER}" "${BREW_PREFIX}/bin/brew" tap | grep -q 'stuffbucket/tap'; then
+    echo "Tapping stuffbucket/tap..."
+    sudo -u "${ACTUAL_USER}" "${BREW_PREFIX}/bin/brew" tap stuffbucket/tap || {
+        echo "Error: Failed to tap stuffbucket/tap"
+        exit 1
+    }
+fi
+
+# Install lima
+echo "Installing lima..."
+sudo -u "${ACTUAL_USER}" "${BREW_PREFIX}/bin/brew" install stuffbucket/tap/lima || {
+    echo "Error: Lima installation failed"
+    exit 1
+}
+
+echo "Lima installation complete!"
+exit 0

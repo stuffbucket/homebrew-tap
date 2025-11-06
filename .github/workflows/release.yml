@@ -1,0 +1,78 @@
+name: Release Packages
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  attach-packages:
+    runs-on: macos-latest
+    permissions:
+      contents: write
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Get package files
+      id: packages
+      run: |
+        # Find all .pkg files
+        HOMEBREW_PKG=$(find pkgs/homebrew -name "*.pkg" -not -path "*/build/*" | head -1)
+        LIMA_PKG=$(find pkgs/lima -name "*.pkg" -not -path "*/build/*" | head -1)
+        VSCODE_PKG=$(find pkgs/vscode-lima -name "*.pkg" -not -path "*/build/*" | head -1)
+        
+        echo "homebrew_pkg=${HOMEBREW_PKG}" >> $GITHUB_OUTPUT
+        echo "lima_pkg=${LIMA_PKG}" >> $GITHUB_OUTPUT
+        echo "vscode_pkg=${VSCODE_PKG}" >> $GITHUB_OUTPUT
+        
+        echo "Found packages:"
+        echo "  - ${HOMEBREW_PKG}"
+        echo "  - ${LIMA_PKG}"
+        echo "  - ${VSCODE_PKG}"
+    
+    - name: Upload Homebrew package to release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ${{ steps.packages.outputs.homebrew_pkg }}
+        asset_name: ${{ github.event.repository.name }}-homebrew.pkg
+        asset_content_type: application/octet-stream
+    
+    - name: Upload Lima package to release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ${{ steps.packages.outputs.lima_pkg }}
+        asset_name: ${{ github.event.repository.name }}-lima.pkg
+        asset_content_type: application/octet-stream
+    
+    - name: Upload VS Code Lima package to release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ${{ steps.packages.outputs.vscode_pkg }}
+        asset_name: ${{ github.event.repository.name }}-vscode-lima.pkg
+        asset_content_type: application/octet-stream
+    
+    - name: Create checksum file
+      run: |
+        cd pkgs
+        shasum -a 256 */*.pkg > SHA256SUMS
+        cat SHA256SUMS
+    
+    - name: Upload checksum file to release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: pkgs/SHA256SUMS
+        asset_name: SHA256SUMS
+        asset_content_type: text/plain

@@ -4,10 +4,22 @@ Homebrew formulae for stuffbucket projects.
 
 ## Installation
 
+### Via Homebrew (Recommended)
+
 ```bash
 brew tap stuffbucket/tap
 brew install stuffbucket/tap/<formula>
 ```
+
+### Via macOS Installer Packages
+
+Pre-built macOS `.pkg` installers are available in the `pkgs/` directory:
+
+1. **stuffbucket-homebrew-1.0.0.pkg** - Installs Homebrew (install first)
+2. **stuffbucket-lima-2.0.0.pkg** - Installs Lima (requires Homebrew)
+3. **stuffbucket-vscode-lima-0.0.1.pkg** - Installs VS Code Lima extension (requires Homebrew)
+
+See [pkgs/README.md](pkgs/README.md) for details.
 
 ## Available Formulas
 
@@ -30,6 +42,11 @@ Virtual GPU renderer for QEMU (macOS port).
 OpenGL function pointer library with EGL support for macOS.
 
 **Repository:** [anholt/libepoxy](https://github.com/anholt/libepoxy)
+
+### vscode-lima
+VS Code extension installer for Lima Manager.
+
+**Repository:** [stuffbucket/vscode-lima](https://github.com/stuffbucket/vscode-lima)
 
 ## License
 

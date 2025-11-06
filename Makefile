@@ -1,4 +1,4 @@
-.PHONY: help update check-tag list-formulas update-all info dry-run
+.PHONY: help update check-tag list-formulas update-all info dry-run pkg-sync-versions pkg-check-versions pkg-check-stale pkg-build
 
 FORMULA ?=
 
@@ -10,18 +10,30 @@ help:
 	@echo "  make dry-run             Show what update commands would be needed"
 	@echo "  make update FORMULA=lima TAG=v2.0.0-beta.0.2-fork"
 	@echo "  make list-formulas"
+	@echo "  make pkg-check-versions  Check if package versions match formula versions"
+	@echo "  make pkg-check-stale     Check if packages need rebuilding (commit hash changed)"
+	@echo "  make pkg-sync-versions   Update package versions to match formulas"
+	@echo "  make pkg-build           Build all macOS installer packages"
 	@echo ""
 	@echo "Targets:"
-	@echo "  info           Show current versions of all formulas"
-	@echo "  dry-run        Show update commands for all formulas (manual step)"
-	@echo "  update         Update formula with new release tag"
-	@echo "                 Requires FORMULA and TAG parameters"
-	@echo "  list-formulas  List all available formulas"
+	@echo "  info                Show current versions of all formulas"
+	@echo "  dry-run             Show update commands for all formulas (manual step)"
+	@echo "  update              Update formula with new release tag"
+	@echo "                      Requires FORMULA and TAG parameters"
+	@echo "  list-formulas       List all available formulas"
+	@echo "  pkg-check-versions  Check package vs formula version mismatches"
+	@echo "  pkg-check-stale     Check if packages were built from current commit"
+	@echo "  pkg-sync-versions   Sync package versions to match formula versions"
+	@echo "  pkg-build           Build all macOS .pkg installer packages"
 	@echo ""
 	@echo "Examples:"
 	@echo "  make info"
 	@echo "  make dry-run"
 	@echo "  make update FORMULA=lima TAG=v2.0.0-beta.0.2-fork"
+	@echo "  make pkg-check-versions"
+	@echo "  make pkg-check-stale"
+	@echo "  make pkg-sync-versions"
+	@echo "  make pkg-build"
 
 list-formulas:
 	@echo "Available formulas:"
@@ -129,3 +141,85 @@ update: check-tag
 	else \
 		echo "Changes not committed. Review with 'git diff'"; \
 	fi
+
+pkg-check-versions:
+	@echo "Package Version Check:"
+	@echo "======================"
+	@echo ""
+	@# Check lima
+	@LIMA_FORMULA_VER=$$(grep -E '^\s*version\s+"' Formula/lima.rb | head -1 | sed 's/.*"\(.*\)".*/\1/'); \
+	LIMA_PKG_VER=$$(grep -E '\-\-version\s+"' pkgs/lima/build.sh | head -1 | sed 's/.*"\(.*\)".*/\1/'); \
+	echo "lima:"; \
+	echo "  Formula version: $$LIMA_FORMULA_VER"; \
+	echo "  Package version: $$LIMA_PKG_VER"; \
+	if [ "$$LIMA_FORMULA_VER" != "$$LIMA_PKG_VER" ]; then \
+		echo "  ⚠️  MISMATCH DETECTED"; \
+	else \
+		echo "  ✓ Versions match"; \
+	fi; \
+	echo ""
+	@# Check vscode-lima
+	@VSCODE_FORMULA_VER=$$(grep -E '^\s*version\s+"' Formula/vscode-lima.rb | head -1 | sed 's/.*"\(.*\)".*/\1/'); \
+	VSCODE_PKG_VER=$$(grep -E '\-\-version\s+"' pkgs/vscode-lima/build.sh | head -1 | sed 's/.*"\(.*\)".*/\1/'); \
+	echo "vscode-lima:"; \
+	echo "  Formula version: $$VSCODE_FORMULA_VER"; \
+	echo "  Package version: $$VSCODE_PKG_VER"; \
+	if [ "$$VSCODE_FORMULA_VER" != "$$VSCODE_PKG_VER" ]; then \
+		echo "  ⚠️  MISMATCH DETECTED"; \
+	else \
+		echo "  ✓ Versions match"; \
+	fi; \
+	echo ""
+	@echo "Note: stuffbucket-homebrew package is tap-only (version 1.0.0 is static)"
+
+pkg-sync-versions:
+	@echo "Syncing package versions to match formulas..."
+	@echo ""
+	@# Sync lima
+	@LIMA_VER=$$(grep -E '^\s*version\s+"' Formula/lima.rb | head -1 | sed 's/.*"\(.*\)".*/\1/'); \
+	echo "Updating lima package to $$LIMA_VER..."; \
+	sed -i '' "s/--version \"[^\"]*\"/--version \"$$LIMA_VER\"/" pkgs/lima/build.sh; \
+	sed -i '' "s/stuffbucket-lima-[0-9].*\.pkg/stuffbucket-lima-$$LIMA_VER.pkg/" pkgs/lima/build.sh; \
+	sed -i '' 's|<pkg-ref id="com.stuffbucket.lima" version="[^"]*"|<pkg-ref id="com.stuffbucket.lima" version="'"$$LIMA_VER"'"|' pkgs/lima/distribution.xml
+	@# Sync vscode-lima
+	@VSCODE_VER=$$(grep -E '^\s*version\s+"' Formula/vscode-lima.rb | head -1 | sed 's/.*"\(.*\)".*/\1/'); \
+	echo "Updating vscode-lima package to $$VSCODE_VER..."; \
+	sed -i '' "s/--version \"[^\"]*\"/--version \"$$VSCODE_VER\"/" pkgs/vscode-lima/build.sh; \
+	sed -i '' "s/stuffbucket-vscode-lima-[0-9].*\.pkg/stuffbucket-vscode-lima-$$VSCODE_VER.pkg/" pkgs/vscode-lima/build.sh; \
+	sed -i '' 's|<pkg-ref id="com.stuffbucket.vscode-lima" version="[^"]*"|<pkg-ref id="com.stuffbucket.vscode-lima" version="'"$$VSCODE_VER"'"|' pkgs/vscode-lima/distribution.xml
+	@echo ""
+	@echo "✓ Package versions synced"
+	@echo ""
+	@echo "Changes:"
+	@git diff pkgs/
+	@echo ""
+	@echo "Run 'make pkg-build' to rebuild packages with new versions"
+
+pkg-check-stale:
+	@echo "Checking if packages are stale..."
+	@CURRENT_HASH=$$(git rev-parse HEAD 2>/dev/null || echo "unknown"); \
+	for metadata in pkgs/*/.build-metadata; do \
+		if [ -f "$$metadata" ]; then \
+			PKG_DIR=$$(dirname "$$metadata"); \
+			PKG_NAME=$$(basename "$$PKG_DIR"); \
+			BUILD_HASH=$$(grep '^GIT_HASH=' "$$metadata" | cut -d'=' -f2); \
+			BUILD_DATE=$$(grep '^BUILD_DATE=' "$$metadata" | cut -d'=' -f2); \
+			if [ "$$BUILD_HASH" != "$$CURRENT_HASH" ]; then \
+				echo "⚠️  $$PKG_NAME package is STALE"; \
+				echo "    Built from: $$BUILD_HASH"; \
+				echo "    Current:    $$CURRENT_HASH"; \
+				echo "    Built on:   $$BUILD_DATE"; \
+				echo ""; \
+			else \
+				echo "✅ $$PKG_NAME package is up-to-date"; \
+			fi; \
+		fi; \
+	done
+
+pkg-build:
+	@echo "Building macOS installer packages..."
+	@cd pkgs && ./build-all.sh
+	@echo ""
+	@echo "✓ All packages built successfully"
+	@echo ""
+	@find pkgs -name "*.pkg" -not -path "*/build/*" -exec ls -lh {} \;
