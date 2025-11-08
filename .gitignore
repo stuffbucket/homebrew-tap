@@ -2,4 +2,5 @@
 
 # Package build artifacts
 pkgs/*/build/
+pkgs/*/.build-metadata
 installers/
