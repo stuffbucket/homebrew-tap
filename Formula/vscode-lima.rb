@@ -2,6 +2,7 @@ class VscodeLima < Formula
   desc "VS Code extension for managing Lima virtual machines"
   homepage "https://github.com/stuffbucket/vscode-lima"
   url "https://github.com/stuffbucket/vscode-lima/releases/download/v0.0.1/lima-manager-0.0.1.vsix"
+  sha256 "cc11d415d9326ccc4e749aed6d2d8f12a28e53d001938f6b4cf2c47a2422dad0"
   license "MIT"
 
   depends_on "lima"
