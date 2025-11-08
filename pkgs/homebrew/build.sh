@@ -44,6 +44,6 @@ productbuild --distribution "${SCRIPT_DIR}/distribution.xml" \
              --resources "${SCRIPT_DIR}" \
              --package-path "${BUILD_DIR}" \
              --version "1.0.0" \
-             "${SCRIPT_DIR}/stuffbucket-homebrew-1.0.0.pkg"
+             "${SCRIPT_DIR}/stuffbucket-homebrew-1.pkg"
 
-echo "Package built: ${SCRIPT_DIR}/stuffbucket-homebrew-1.0.0.pkg"
+echo "Package built: ${SCRIPT_DIR}/stuffbucket-homebrew-1.pkg"

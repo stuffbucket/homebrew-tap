@@ -44,5 +44,5 @@
         <pkg-ref id="com.stuffbucket.vscode-lima"/>
     </choice>
     
-    <pkg-ref id="com.stuffbucket.vscode-lima" version="0.0.1" onConclusion="none">vscode-lima.pkg</pkg-ref>
+    <pkg-ref id="com.stuffbucket.vscode-lima" version="0.0.0" onConclusion="none">vscode-lima.pkg</pkg-ref>
 </installer-gui-script>

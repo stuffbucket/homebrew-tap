@@ -1,5 +1,14 @@
 name: Publish Installers
 
+# This workflow publishes pre-built macOS installer packages to stuffbucket/installers.
+#
+# Package Versioning:
+# - Packages use major version in filename (e.g., stuffbucket-lima-2.pkg)
+# - Packages are wrappers that run `brew install` to get latest version from formulas
+# - Packages must be built manually on macOS and committed to this repo
+# - Run `pkgs/build-all.sh` on macOS when package installer logic changes
+# - No need to rebuild for minor/patch formula version updates
+
 on:
   push:
     branches: [ main ]
@@ -37,9 +46,37 @@ jobs:
       working-directory: homebrew-tap
       run: |
         echo "Verifying pre-built packages..."
-        ls -lh pkgs/homebrew/stuffbucket-homebrew-*.pkg
-        ls -lh pkgs/lima/stuffbucket-lima-*.pkg
-        ls -lh pkgs/vscode-lima/stuffbucket-vscode-lima-*.pkg
+        MISSING=0
+
+        if [ ! -f pkgs/homebrew/stuffbucket-homebrew-1.pkg ]; then
+          echo "❌ Missing: pkgs/homebrew/stuffbucket-homebrew-1.pkg"
+          MISSING=1
+        else
+          ls -lh pkgs/homebrew/stuffbucket-homebrew-1.pkg
+        fi
+
+        if [ ! -f pkgs/lima/stuffbucket-lima-2.pkg ]; then
+          echo "❌ Missing: pkgs/lima/stuffbucket-lima-2.pkg"
+          MISSING=1
+        else
+          ls -lh pkgs/lima/stuffbucket-lima-2.pkg
+        fi
+
+        if [ ! -f pkgs/vscode-lima/stuffbucket-vscode-lima-0.pkg ]; then
+          echo "❌ Missing: pkgs/vscode-lima/stuffbucket-vscode-lima-0.pkg"
+          MISSING=1
+        else
+          ls -lh pkgs/vscode-lima/stuffbucket-vscode-lima-0.pkg
+        fi
+
+        if [ $MISSING -eq 1 ]; then
+          echo ""
+          echo "⚠️  Packages must be built on macOS and committed to the repository."
+          echo "Run 'pkgs/build-all.sh' on macOS, then commit the generated .pkg files."
+          echo "See pkgs/README.md for details."
+          exit 1
+        fi
+
         echo "✅ All packages found"
     
     - name: Checkout installers repo
@@ -53,9 +90,9 @@ jobs:
     - name: Copy packages to installers repo
       run: |
         mkdir -p installers/macos
-        cp homebrew-tap/pkgs/homebrew/stuffbucket-homebrew-*.pkg installers/macos/
-        cp homebrew-tap/pkgs/lima/stuffbucket-lima-*.pkg installers/macos/
-        cp homebrew-tap/pkgs/vscode-lima/stuffbucket-vscode-lima-*.pkg installers/macos/
+        cp homebrew-tap/pkgs/homebrew/stuffbucket-homebrew-1.pkg installers/macos/
+        cp homebrew-tap/pkgs/lima/stuffbucket-lima-2.pkg installers/macos/
+        cp homebrew-tap/pkgs/vscode-lima/stuffbucket-vscode-lima-0.pkg installers/macos/
         
         # Generate checksums
         cd installers/macos
@@ -121,11 +158,11 @@ jobs:
         name: Lima ${{ steps.versions.outputs.lima_version }}
         body: |
           # macOS Installer Packages
-          
+
           ## What's Included
-          - **stuffbucket-homebrew-1.0.0.pkg** - Homebrew tap setup
-          - **stuffbucket-lima-${{ steps.versions.outputs.lima_version }}.pkg** - Lima virtual machines
-          - **stuffbucket-vscode-lima-${{ steps.versions.outputs.vscode_version }}.pkg** - VS Code extension
+          - **stuffbucket-homebrew-1.pkg** - Homebrew tap setup (v1.0.0)
+          - **stuffbucket-lima-2.pkg** - Lima virtual machines (installs v${{ steps.versions.outputs.lima_version }})
+          - **stuffbucket-vscode-lima-0.pkg** - VS Code extension (installs v${{ steps.versions.outputs.vscode_version }})
           
           ## Installation
           

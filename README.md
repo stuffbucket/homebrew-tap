@@ -15,9 +15,11 @@ brew install stuffbucket/tap/<formula>
 
 Pre-built macOS `.pkg` installers are available in the `pkgs/` directory:
 
-1. **stuffbucket-homebrew-1.0.0.pkg** - Installs Homebrew (install first)
-2. **stuffbucket-lima-2.0.0.pkg** - Installs Lima (requires Homebrew)
-3. **stuffbucket-vscode-lima-0.0.1.pkg** - Installs VS Code Lima extension (requires Homebrew)
+1. **stuffbucket-homebrew-1.pkg** - Installs Homebrew (install first)
+2. **stuffbucket-lima-2.pkg** - Installs Lima (requires Homebrew)
+3. **stuffbucket-vscode-lima-0.pkg** - Installs VS Code Lima extension (requires Homebrew)
+
+Note: Package filenames use major version only. They install the latest software version from the formulas.
 
 See [pkgs/README.md](pkgs/README.md) for details.
 
