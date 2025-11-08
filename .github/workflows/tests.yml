@@ -19,6 +19,8 @@ jobs:
       
     - name: Tap repository
       run: |
+        # Remove tap if it already exists to avoid remote mismatch
+        brew untap stuffbucket/tap 2>/dev/null || true
         # Tap from local checkout
         brew tap stuffbucket/tap $(pwd)
         
