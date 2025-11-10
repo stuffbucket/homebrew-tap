@@ -35,7 +35,7 @@ jobs:
       id: versions
       working-directory: homebrew-tap
       run: |
-        brew tap stuffbucket/tap $(pwd)
+        brew tap stuffbucket/tap .
         LIMA_VER=$(brew info --json=v2 stuffbucket/tap/lima | jq -r '.formulae[0].versions.stable')
         echo "lima_version=${LIMA_VER}" >> $GITHUB_OUTPUT
         echo "homebrew_version=1.0.0" >> $GITHUB_OUTPUT
