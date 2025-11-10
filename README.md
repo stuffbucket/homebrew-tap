@@ -24,12 +24,11 @@ This installs:
 brew tap stuffbucket/tap
 brew install stuffbucket/tap/lima
 
-# Install VS Code extension helper
-brew install stuffbucket/tap/vscode-lima
-vscode-lima-install
+# Install VS Code extension
+code --install-extension stuffbucket-co.lima-manager
 ```
 
-Or install the extension directly in VS Code:
+Or install the extension in VS Code:
 - Press `Cmd+Shift+X` (Extensions)
 - Search for "Lima Manager"
 - Click Install
@@ -70,11 +69,14 @@ OpenGL function pointer library with EGL support for macOS.
 
 **Repository:** [anholt/libepoxy](https://github.com/anholt/libepoxy)
 
-### vscode-lima
-Helper formula to install the Lima Manager VS Code extension from the marketplace.
+## VS Code Extension
 
-**Repository:** [stuffbucket/vscode-lima](https://github.com/stuffbucket/vscode-lima)
+The **Lima Manager** VS Code extension is available on the marketplace:
+
 **Marketplace:** [stuffbucket-co.lima-manager](https://marketplace.visualstudio.com/items?itemName=stuffbucket-co.lima-manager)
+**Repository:** [stuffbucket/vscode-lima](https://github.com/stuffbucket/vscode-lima)
+
+Install with: `code --install-extension stuffbucket-co.lima-manager`
 
 The extension auto-updates through VS Code.
 

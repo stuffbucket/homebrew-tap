@@ -36,8 +36,7 @@ brew install stuffbucket/tap/lima
 echo ""
 if command -v code &> /dev/null; then
     echo "📝 Installing VS Code Lima Manager extension..."
-    brew install stuffbucket/tap/vscode-lima
-    vscode-lima-install
+    code --install-extension stuffbucket-co.lima-manager
     echo ""
     echo "✅ Installation complete!"
     echo ""
@@ -50,6 +49,6 @@ else
     echo ""
     echo "To install the VS Code extension later:"
     echo "  1. Install VS Code from https://code.visualstudio.com/"
-    echo "  2. Run: brew install stuffbucket/tap/vscode-lima && vscode-lima-install"
+    echo "  2. Run: code --install-extension stuffbucket-co.lima-manager"
     echo "  OR search for 'Lima Manager' in VS Code Extensions"
 fi
