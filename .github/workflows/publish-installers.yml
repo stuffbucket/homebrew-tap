@@ -25,15 +25,12 @@ jobs:
     steps:
     - name: Checkout homebrew-tap
       uses: actions/checkout@v4
-      with:
-        path: homebrew-tap
     
     - name: Set up Homebrew
       uses: Homebrew/actions/setup-homebrew@master
     
     - name: Extract versions
       id: versions
-      working-directory: homebrew-tap
       run: |
         brew tap stuffbucket/tap .
         LIMA_VER=$(brew info --json=v2 stuffbucket/tap/lima | jq -r '.formulae[0].versions.stable')
@@ -41,7 +38,6 @@ jobs:
         echo "homebrew_version=1.0.0" >> $GITHUB_OUTPUT
     
     - name: Verify packages exist
-      working-directory: homebrew-tap
       run: |
         echo "Verifying pre-built packages..."
         MISSING=0
@@ -83,8 +79,8 @@ jobs:
     - name: Copy packages to installers repo
       run: |
         mkdir -p installers/macos
-        cp homebrew-tap/pkgs/homebrew/stuffbucket-homebrew-1.pkg installers/macos/
-        cp homebrew-tap/pkgs/lima/stuffbucket-lima-2.pkg installers/macos/
+        cp pkgs/homebrew/stuffbucket-homebrew-1.pkg installers/macos/
+        cp pkgs/lima/stuffbucket-lima-2.pkg installers/macos/
         
         # Generate checksums
         cd installers/macos
