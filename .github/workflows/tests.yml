@@ -41,4 +41,7 @@ jobs:
     - name: Cleanup tap
       if: always()
       run: |
-        brew untap stuffbucket/tap || true
+        brew untap stuffbucket/tap 2>/dev/null || true
+        # Force remove the tap directory if it still exists
+        sudo rm -rf /home/linuxbrew/.linuxbrew/Homebrew/Library/Taps/stuffbucket/homebrew-tap || true
+        sudo rm -rf /home/linuxbrew/.linuxbrew/Homebrew/Library/Taps/stuffbucket || true
