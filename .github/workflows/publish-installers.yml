@@ -100,19 +100,26 @@ jobs:
     - name: Create release tag
       working-directory: installers
       run: |
-        TAG="lima-v${{ steps.versions.outputs.lima_version }}"
+        # Use date-based versioning for general installer releases
+        TAG="v$(date -u +%Y.%m.%d)"
+        RELEASE_NUM=1
+        
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
         
         # Fetch all tags to check if tag exists remotely
         git fetch --tags
         
-        # Check if tag exists (local or remote)
-        if git rev-parse "${TAG}" >/dev/null 2>&1; then
-          echo "Tag ${TAG} already exists, skipping release"
-          echo "tag_exists=true" >> $GITHUB_ENV
-          exit 0
+        # If tag exists, append sequential number
+        while git rev-parse "${TAG}.${RELEASE_NUM}" >/dev/null 2>&1; do
+          RELEASE_NUM=$((RELEASE_NUM + 1))
+        done
+        
+        if [ $RELEASE_NUM -gt 1 ]; then
+          TAG="${TAG}.${RELEASE_NUM}"
         fi
+        
+        echo "release_tag=${TAG}" >> $GITHUB_ENV
         
         # Add package files
         git add macos/
@@ -133,17 +140,15 @@ jobs:
         fi
         
         # Create and push tag
-        git tag -a "${TAG}" -m "Release ${TAG}"
+        git tag -a "${TAG}" -m "Stuffbucket Installers ${TAG}"
         git push origin "${TAG}"
-        echo "tag_exists=false" >> $GITHUB_ENV
     
     - name: Create GitHub Release
-      if: env.tag_exists != 'true'
       uses: softprops/action-gh-release@v1
       with:
         repository: stuffbucket/installers
-        tag_name: lima-v${{ steps.versions.outputs.lima_version }}
-        name: Lima ${{ steps.versions.outputs.lima_version }}
+        tag_name: ${{ env.release_tag }}
+        name: Stuffbucket Installers ${{ env.release_tag }}
         body: |
           # macOS Installer Packages
 
