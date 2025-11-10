@@ -37,3 +37,8 @@ jobs:
     - name: Test tap search
       run: |
         brew search stuffbucket/tap/
+
+    - name: Cleanup tap
+      if: always()
+      run: |
+        brew untap stuffbucket/tap || true
