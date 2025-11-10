@@ -37,9 +37,7 @@ jobs:
       run: |
         brew tap stuffbucket/tap $(pwd)
         LIMA_VER=$(brew info --json=v2 stuffbucket/tap/lima | jq -r '.formulae[0].versions.stable')
-        VSCODE_VER=$(brew info --json=v2 stuffbucket/tap/vscode-lima | jq -r '.formulae[0].versions.stable')
         echo "lima_version=${LIMA_VER}" >> $GITHUB_OUTPUT
-        echo "vscode_version=${VSCODE_VER}" >> $GITHUB_OUTPUT
         echo "homebrew_version=1.0.0" >> $GITHUB_OUTPUT
     
     - name: Verify packages exist
@@ -62,13 +60,6 @@ jobs:
           ls -lh pkgs/lima/stuffbucket-lima-2.pkg
         fi
 
-        if [ ! -f pkgs/vscode-lima/stuffbucket-vscode-lima-0.pkg ]; then
-          echo "❌ Missing: pkgs/vscode-lima/stuffbucket-vscode-lima-0.pkg"
-          MISSING=1
-        else
-          ls -lh pkgs/vscode-lima/stuffbucket-vscode-lima-0.pkg
-        fi
-
         if [ $MISSING -eq 1 ]; then
           echo ""
           echo "⚠️  Packages must be built on macOS and committed to the repository."
@@ -78,6 +69,8 @@ jobs:
         fi
 
         echo "✅ All packages found"
+        echo ""
+        echo "Note: VS Code extension distributed via marketplace (stuffbucket-co.lima-manager)"
     
     - name: Checkout installers repo
       uses: actions/checkout@v4
@@ -92,7 +85,6 @@ jobs:
         mkdir -p installers/macos
         cp homebrew-tap/pkgs/homebrew/stuffbucket-homebrew-1.pkg installers/macos/
         cp homebrew-tap/pkgs/lima/stuffbucket-lima-2.pkg installers/macos/
-        cp homebrew-tap/pkgs/vscode-lima/stuffbucket-vscode-lima-0.pkg installers/macos/
         
         # Generate checksums
         cd installers/macos
@@ -103,7 +95,7 @@ jobs:
         {
           "homebrew": "${{ steps.versions.outputs.homebrew_version }}",
           "lima": "${{ steps.versions.outputs.lima_version }}",
-          "vscode-lima": "${{ steps.versions.outputs.vscode_version }}",
+          "vscode-lima": "See VS Code Marketplace: stuffbucket-co.lima-manager",
           "updated": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
           "commit": "${{ github.sha }}"
         }
@@ -137,8 +129,8 @@ jobs:
           git commit -m "Update macOS installers
 
         - Lima: ${{ steps.versions.outputs.lima_version }}
-        - VS Code Lima: ${{ steps.versions.outputs.vscode_version }}
         - Homebrew: ${{ steps.versions.outputs.homebrew_version }}
+        - VS Code Lima: Available on marketplace (stuffbucket-co.lima-manager)
 
         Source: stuffbucket/homebrew-tap@${{ github.sha }}"
           git push origin main
@@ -162,19 +154,26 @@ jobs:
           ## What's Included
           - **stuffbucket-homebrew-1.pkg** - Homebrew tap setup (v1.0.0)
           - **stuffbucket-lima-2.pkg** - Lima virtual machines (installs v${{ steps.versions.outputs.lima_version }})
-          - **stuffbucket-vscode-lima-0.pkg** - VS Code extension (installs v${{ steps.versions.outputs.vscode_version }})
-          
+
+          ## VS Code Extension
+          Install separately from the VS Code Marketplace:
+          ```bash
+          code --install-extension stuffbucket-co.lima-manager
+          ```
+
+          Or search "Lima Manager" in VS Code Extensions (Cmd+Shift+X)
+
           ## Installation
-          
+
           Install in order:
           1. Homebrew package (sets up tap)
           2. Lima package
-          3. VS Code Lima package (optional)
-          
+          3. VS Code extension (optional, see above)
+
           ## Checksums
-          
+
           See `SHA256SUMS` file for package verification.
-          
+
           ---
           Built from: stuffbucket/homebrew-tap@${{ github.sha }}
         files: |

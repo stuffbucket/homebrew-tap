@@ -1,15 +1,13 @@
 class VscodeLima < Formula
-  desc "VS Code extension for managing Lima virtual machines"
+  desc "VS Code extension installer for managing Lima virtual machines"
   homepage "https://github.com/stuffbucket/vscode-lima"
-  url "https://github.com/stuffbucket/vscode-lima/releases/download/v0.0.1/lima-manager-0.0.1.vsix"
-  sha256 "cc11d415d9326ccc4e749aed6d2d8f12a28e53d001938f6b4cf2c47a2422dad0"
+  url "https://github.com/stuffbucket/vscode-lima/archive/refs/tags/v0.0.1.tar.gz"
+  sha256 "3323885942b0d3d584690a3059e5ee2cd133b4ae8195ddbd8fc09948c5ac5036"
   license "MIT"
 
   depends_on "lima"
 
   def install
-    libexec.install "lima-manager-0.0.1.vsix"
-
     (bin/"vscode-lima-install").write <<~EOS
       #!/bin/bash
       set -e
@@ -32,9 +30,11 @@ class VscodeLima < Formula
         exit 1
       fi
 
-      echo "Installing Lima Manager extension..."
-      "$VSCODE_BIN" --install-extension "#{libexec}/lima-manager-#{version}.vsix"
-      echo "Lima Manager extension installed successfully!"
+      echo "Installing Lima Manager extension from VS Code Marketplace..."
+      "$VSCODE_BIN" --install-extension stuffbucket-co.lima-manager
+      echo "✅ Lima Manager extension installed successfully!"
+      echo ""
+      echo "The extension will auto-update through VS Code."
     EOS
 
     chmod 0755, bin/"vscode-lima-install"
@@ -42,25 +42,19 @@ class VscodeLima < Formula
 
   def caveats
     <<~EOS
-      To install the Lima Manager extension in VS Code, run:
+      To install the Lima Manager extension, run:
         vscode-lima-install
 
-      Or manually install with:
-        code --install-extension #{libexec}/lima-manager-#{version}.vsix
+      Or install directly in VS Code:
+        1. Press Cmd+Shift+X (Extensions view)
+        2. Search for "Lima Manager"
+        3. Click Install
 
-      The extension will be available in VS Code after installation.
+      The extension will auto-update through VS Code.
     EOS
   end
 
-  def post_install
-    system bin/"vscode-lima-install"
-  rescue => e
-    opoo "Could not auto-install VS Code extension: #{e.message}"
-    opoo "Run 'vscode-lima-install' manually to install the extension."
-  end
-
   test do
-    assert_path_exists libexec/"lima-manager-0.0.1.vsix"
     assert_path_exists bin/"vscode-lima-install"
     assert_predicate bin/"vscode-lima-install", :executable?
   end

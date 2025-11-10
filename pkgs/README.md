@@ -7,7 +7,6 @@ This directory contains macOS `.pkg` installer packages for stuffbucket's Homebr
 **Package Versioning:** Packages use semantic versioning with major version only in the filename:
 - `stuffbucket-homebrew-1.pkg` - Installer v1.x
 - `stuffbucket-lima-2.pkg` - Installer v2.x (installs latest Lima 2.x from formula)
-- `stuffbucket-vscode-lima-0.pkg` - Installer v0.x (installs latest vscode-lima from formula)
 
 The packages are wrappers that install software via Homebrew formulas. The actual software version is determined by the formula at install time, so packages don't need to be rebuilt for minor version updates.
 
@@ -26,13 +25,7 @@ The packages are wrappers that install software via Homebrew formulas. The actua
 - Taps stuffbucket/tap repository
 - **Requires:** Homebrew (checks during installation)
 
-### 3. stuffbucket-vscode-lima-0.pkg
-**VS Code Extension Installer**
-
-- Installs vscode-lima and Lima as dependencies (versions from formulas)
-- Provides `vscode-lima-install` command for extension installation
-- Taps stuffbucket/tap repository
-- **Requires:** Homebrew (checks during installation)
+**VS Code Extension**: Install separately via `code --install-extension stuffbucket-co.lima-manager` or search "Lima Manager" in VS Code
 
 ## Building Packages
 
@@ -54,26 +47,24 @@ The packages are wrappers that install software via Homebrew formulas. The actua
 This will create:
 - `homebrew/stuffbucket-homebrew-1.pkg`
 - `lima/stuffbucket-lima-2.pkg`
-- `vscode-lima/stuffbucket-vscode-lima-0.pkg`
 
 ### Build Individual Packages
 ```bash
 cd homebrew && ./build.sh
 cd lima && ./build.sh
-cd vscode-lima && ./build.sh
 ```
 
 After building, commit the packages to the repository.
 
 ## Installation Order
 
-Install in this order to satisfy dependencies:
+Install in this order:
 
 1. **stuffbucket-homebrew-1.pkg** (foundation)
 2. **stuffbucket-lima-2.pkg** (requires Homebrew)
-3. **stuffbucket-vscode-lima-0.pkg** (requires Homebrew)
+3. **VS Code extension** (optional) - Install via marketplace or `code --install-extension stuffbucket-co.lima-manager`
 
-Note: The Lima and VS Code Lima packages will check for Homebrew and refuse to install if it's not present.
+Note: The Lima package will check for Homebrew and refuse to install if it's not present.
 
 ## Package Structure
 
