@@ -18,13 +18,10 @@ cd "${SCRIPT_DIR}/lima"
 ./build.sh
 echo ""
 
-# Build vscode-lima package
-echo "==> Building VS Code Lima package..."
-cd "${SCRIPT_DIR}/vscode-lima"
-./build.sh
-echo ""
-
 echo "All packages built successfully!"
+echo ""
+echo "Note: VS Code extension is distributed via VS Code Marketplace."
+echo "No package needed - users install via: code --install-extension stuffbucket-co.lima-manager"
 echo ""
 echo "Packages:"
 find "${SCRIPT_DIR}" -name "stuffbucket-*.pkg" -not -path "*/build/*" | while read pkg; do

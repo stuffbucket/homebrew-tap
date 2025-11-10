@@ -19,6 +19,8 @@ jobs:
       
     - name: Tap repository
       run: |
+        # Remove tap if it already exists to avoid remote mismatch
+        brew untap stuffbucket/tap 2>/dev/null || true
         # Tap from local checkout
         brew tap stuffbucket/tap $(pwd)
         
@@ -35,3 +37,14 @@ jobs:
     - name: Test tap search
       run: |
         brew search stuffbucket/tap/
+
+    - name: Cleanup tap
+      if: always()
+      run: |
+        brew untap stuffbucket/tap 2>/dev/null || true
+        # Force remove the tap directory if it still exists
+        sudo rm -rf /home/linuxbrew/.linuxbrew/Homebrew/Library/Taps/stuffbucket/homebrew-tap || true
+        sudo rm -rf /home/linuxbrew/.linuxbrew/Homebrew/Library/Taps/stuffbucket || true
+        # Create parent directory and empty file for action's post.sh to remove without errors
+        sudo mkdir -p /home/linuxbrew/.linuxbrew/Homebrew/Library/Taps/stuffbucket || true
+        sudo touch /home/linuxbrew/.linuxbrew/Homebrew/Library/Taps/stuffbucket/homebrew-tap || true

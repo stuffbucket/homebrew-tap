@@ -44,5 +44,5 @@
         <pkg-ref id="com.stuffbucket.lima"/>
     </choice>
     
-    <pkg-ref id="com.stuffbucket.lima" version="2.0.0-beta.0.1" onConclusion="none">lima.pkg</pkg-ref>
+    <pkg-ref id="com.stuffbucket.lima" version="2.0.0" onConclusion="none">lima.pkg</pkg-ref>
 </installer-gui-script>

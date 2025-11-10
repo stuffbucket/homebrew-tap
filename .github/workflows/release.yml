@@ -22,10 +22,10 @@ jobs:
     - name: Get package files
       id: packages
       run: |
-        # Find all .pkg files
-        HOMEBREW_PKG=$(find pkgs/homebrew -name "*.pkg" -not -path "*/build/*" | head -1)
-        LIMA_PKG=$(find pkgs/lima -name "*.pkg" -not -path "*/build/*" | head -1)
-        VSCODE_PKG=$(find pkgs/vscode-lima -name "*.pkg" -not -path "*/build/*" | head -1)
+        # Find all .pkg files (using major version naming)
+        HOMEBREW_PKG=$(find pkgs/homebrew -name "stuffbucket-homebrew-*.pkg" -not -path "*/build/*" | head -1)
+        LIMA_PKG=$(find pkgs/lima -name "stuffbucket-lima-*.pkg" -not -path "*/build/*" | head -1)
+        VSCODE_PKG=$(find pkgs/vscode-lima -name "stuffbucket-vscode-lima-*.pkg" -not -path "*/build/*" | head -1)
         
         echo "homebrew_pkg=${HOMEBREW_PKG}" >> $GITHUB_OUTPUT
         echo "lima_pkg=${LIMA_PKG}" >> $GITHUB_OUTPUT

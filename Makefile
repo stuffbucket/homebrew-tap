@@ -1,4 +1,4 @@
-.PHONY: help update check-tag list-formulas update-all info dry-run pkg-sync-versions pkg-check-versions pkg-check-stale pkg-build
+.PHONY: help update check-tag list-formulas update-all info dry-run pkg-check-versions pkg-check-stale pkg-build pkg-sync-versions
 
 FORMULA ?=
 
@@ -10,9 +10,8 @@ help:
 	@echo "  make dry-run             Show what update commands would be needed"
 	@echo "  make update FORMULA=lima TAG=v2.0.0-beta.0.2-fork"
 	@echo "  make list-formulas"
-	@echo "  make pkg-check-versions  Check if package versions match formula versions"
+	@echo "  make pkg-check-versions  Show package and formula version info"
 	@echo "  make pkg-check-stale     Check if packages need rebuilding (commit hash changed)"
-	@echo "  make pkg-sync-versions   Update package versions to match formulas"
 	@echo "  make pkg-build           Build all macOS installer packages"
 	@echo ""
 	@echo "Targets:"
@@ -21,10 +20,11 @@ help:
 	@echo "  update              Update formula with new release tag"
 	@echo "                      Requires FORMULA and TAG parameters"
 	@echo "  list-formulas       List all available formulas"
-	@echo "  pkg-check-versions  Check package vs formula version mismatches"
+	@echo "  pkg-check-versions  Show package and formula version info"
 	@echo "  pkg-check-stale     Check if packages were built from current commit"
-	@echo "  pkg-sync-versions   Sync package versions to match formula versions"
 	@echo "  pkg-build           Build all macOS .pkg installer packages"
+	@echo ""
+	@echo "Note: Only 2 packages (homebrew + lima). VS Code extension via marketplace."
 	@echo ""
 	@echo "Examples:"
 	@echo "  make info"
@@ -32,7 +32,6 @@ help:
 	@echo "  make update FORMULA=lima TAG=v2.0.0-beta.0.2-fork"
 	@echo "  make pkg-check-versions"
 	@echo "  make pkg-check-stale"
-	@echo "  make pkg-sync-versions"
 	@echo "  make pkg-build"
 
 list-formulas:
@@ -148,17 +147,25 @@ pkg-check-versions:
 	@echo ""
 	@brew tap stuffbucket/tap $$(pwd) 2>/dev/null || true
 	@echo "lima:"
-	@brew info --json=v2 stuffbucket/tap/lima | jq -r '.formulae[0].versions.stable' | sed 's/^/  Version: /'
+	@brew info --json=v2 stuffbucket/tap/lima | jq -r '.formulae[0].versions.stable' | sed 's/^/  Formula version: /'
 	@echo ""
-	@echo "vscode-lima:"
-	@brew info --json=v2 stuffbucket/tap/vscode-lima | jq -r '.formulae[0].versions.stable' | sed 's/^/  Version: /'
+	@echo "Package versions:"
+	@echo "  stuffbucket-homebrew-1.pkg (static tap installer)"
+	@echo "  stuffbucket-lima-2.pkg (major version from formula)"
+	@echo ""
+	@echo "VS Code Extension:"
+	@echo "  Distributed via VS Code Marketplace (stuffbucket-co.lima-manager)"
+	@echo "  No package needed - installs from marketplace"
 	@echo ""
 	@echo "Note: Build scripts query brew dynamically at build time."
-	@echo "Note: stuffbucket-homebrew package is tap-only (version 1.0.0 is static)"
 
 pkg-sync-versions:
-	@echo "Version sync is no longer needed."
-	@echo "Build scripts query brew dynamically at build time."
+	@echo "⚠️  This target is deprecated."
+	@echo ""
+	@echo "Version sync is no longer needed:"
+	@echo "  - Package filenames use major version only (e.g., stuffbucket-lima-2.pkg)"
+	@echo "  - Build scripts query brew dynamically at build time"
+	@echo "  - VS Code extension distributed via marketplace"
 	@echo ""
 	@echo "To see current versions, run: make pkg-check-versions"
 
