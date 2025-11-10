@@ -33,16 +33,16 @@ jobs:
     
     - name: Extract versions
       id: versions
+      working-directory: homebrew-tap
       run: |
-        cd homebrew-tap
         brew tap stuffbucket/tap .
         LIMA_VER=$(brew info --json=v2 stuffbucket/tap/lima | jq -r '.formulae[0].versions.stable')
         echo "lima_version=${LIMA_VER}" >> $GITHUB_OUTPUT
         echo "homebrew_version=1.0.0" >> $GITHUB_OUTPUT
     
     - name: Verify packages exist
+      working-directory: homebrew-tap
       run: |
-        cd homebrew-tap
         echo "Verifying pre-built packages..."
         MISSING=0
 
