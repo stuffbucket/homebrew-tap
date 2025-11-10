@@ -32,7 +32,7 @@ jobs:
     - name: Extract versions
       id: versions
       run: |
-        brew tap stuffbucket/tap .
+        # Tap is already set up by setup-homebrew action
         LIMA_VER=$(brew info --json=v2 stuffbucket/tap/lima | jq -r '.formulae[0].versions.stable')
         echo "lima_version=${LIMA_VER}" >> $GITHUB_OUTPUT
         echo "homebrew_version=1.0.0" >> $GITHUB_OUTPUT
