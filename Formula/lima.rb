@@ -1,9 +1,9 @@
 class Lima < Formula
   desc "Linux virtual machines with GUI desktop support via VZ"
   homepage "https://lima-vm.io/"
-  url "https://github.com/stuffbucket/lima/archive/refs/tags/v2.0.0-beta.0.3-fork.tar.gz"
-  version "2.0.0-beta.0.3"
-  sha256 "f91c3811099e8e9380fb2e872da0e89535dd09fd580106e92cb4439c043dac2a"
+  url "https://github.com/stuffbucket/lima/archive/refs/tags/v2.0.0-beta-0.4-fork.tar.gz"
+  version "2.0.0-beta.0.4"
+  sha256 "8eae374a6b529623d254a12c0d193137b8572dc068a432108023300b30347a42"
   license "Apache-2.0"
   head "https://github.com/stuffbucket/lima.git", branch: "master"
 
