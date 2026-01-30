@@ -1,0 +1,42 @@
+# Homebrew formula style - compatible with GoReleaser-generated formulas
+AllCops:
+  TargetRubyVersion: 3.1
+  NewCops: enable
+
+Style/Documentation:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+# Homebrew uses double quotes
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+# bin/"name" is standard Homebrew style
+Layout/SpaceAroundOperators:
+  Enabled: false
+
+# Formula classes are meant to be short
+Metrics/ClassLength:
+  Enabled: false
+
+Metrics/MethodLength:
+  Max: 30
+
+# Goreleaser formulas have large on_macos/on_linux blocks
+Metrics/BlockLength:
+  Enabled: false
+
+# Goreleaser defines install/test methods inside on_macos/on_linux blocks
+Style/MethodDefinedInBlock:
+  Enabled: false
+
+Style/SymbolArray:
+  Enabled: false
+
+Style/WordArray:
+  Enabled: false
+
+Layout/LineLength:
+  Max: 120
