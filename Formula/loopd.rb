@@ -5,58 +5,46 @@
 class Loopd < Formula
   desc "Export Loop pages to portable Markdown with images preserved"
   homepage "https://github.com/stuffbucket/loopd"
-  version "0.1.0"
+  version "0.1.1"
   license "MIT"
 
   on_macos do
     if Hardware::CPU.intel?
-      url "https://github.com/stuffbucket/loopd/releases/download/v0.1.0/loopd_0.1.0_darwin_amd64.tar.gz"
-      sha256 "bd607954a0f7cd53303c582756a140aeb70773a72131d5c75aac48276bf2bf04"
+      url "https://github.com/stuffbucket/loopd/releases/download/v0.1.1/loopd_0.1.1_darwin_x86_64.tar.gz"
+      sha256 "32be3f35a8bef005d7d691d355a18bc7806d78ff0de7465b11309601ca20c2ec"
 
       def install
         bin.install "loopd"
-        # Install plugin files for --copy-script and --export-plugin
-        (share/"loopd/plugins/loopd-loop-export").install "plugins/loopd-loop-export/loopd.js"
-        (share/"loopd/plugins/loopd-markdown-importer").install Dir["plugins/loopd-markdown-importer/*"]
       end
     end
     if Hardware::CPU.arm?
-      url "https://github.com/stuffbucket/loopd/releases/download/v0.1.0/loopd_0.1.0_darwin_arm64.tar.gz"
-      sha256 "b8641f557bce57a94e02b853f657c000885d0326deef50441dfdf9412501d9fc"
+      url "https://github.com/stuffbucket/loopd/releases/download/v0.1.1/loopd_0.1.1_darwin_aarch64.tar.gz"
+      sha256 "e2d54104d4a6467bb8ded98a6caaec613ff9baff397285bd89458a3dc3e95be1"
 
       def install
         bin.install "loopd"
-        # Install plugin files for --copy-script and --export-plugin
-        (share/"loopd/plugins/loopd-loop-export").install "plugins/loopd-loop-export/loopd.js"
-        (share/"loopd/plugins/loopd-markdown-importer").install Dir["plugins/loopd-markdown-importer/*"]
       end
     end
   end
 
   on_linux do
     if Hardware::CPU.intel? && Hardware::CPU.is_64_bit?
-      url "https://github.com/stuffbucket/loopd/releases/download/v0.1.0/loopd_0.1.0_linux_amd64.tar.gz"
-      sha256 "8607872c589d7b502481bc902931675262f97d19ce6f50986bcbf5e7ea829183"
+      url "https://github.com/stuffbucket/loopd/releases/download/v0.1.1/loopd_0.1.1_linux_x86_64.tar.gz"
+      sha256 "5b99373b0032fb91d468ed1b6782d4b52253130adff5f4ebb5f0c6cb126eec41"
       def install
         bin.install "loopd"
-        # Install plugin files for --copy-script and --export-plugin
-        (share/"loopd/plugins/loopd-loop-export").install "plugins/loopd-loop-export/loopd.js"
-        (share/"loopd/plugins/loopd-markdown-importer").install Dir["plugins/loopd-markdown-importer/*"]
       end
     end
     if Hardware::CPU.arm? && Hardware::CPU.is_64_bit?
-      url "https://github.com/stuffbucket/loopd/releases/download/v0.1.0/loopd_0.1.0_linux_arm64.tar.gz"
-      sha256 "3577325ef0968b3da09838f3d2b34e7abc07cad2692ff8416727da6a5b9dd73f"
+      url "https://github.com/stuffbucket/loopd/releases/download/v0.1.1/loopd_0.1.1_linux_aarch64.tar.gz"
+      sha256 "1f6d872e327c4b5d2b9c62bcaccb460ceffa25473125b58c825925bc6c7b3198"
       def install
         bin.install "loopd"
-        # Install plugin files for --copy-script and --export-plugin
-        (share/"loopd/plugins/loopd-loop-export").install "plugins/loopd-loop-export/loopd.js"
-        (share/"loopd/plugins/loopd-markdown-importer").install Dir["plugins/loopd-markdown-importer/*"]
       end
     end
   end
 
   test do
-    system "#{bin}/loopd", "--version"
+    system bin/"loopd", "--version"
   end
 end
