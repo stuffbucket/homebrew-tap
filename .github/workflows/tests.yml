@@ -15,14 +15,17 @@ jobs:
       uses: actions/checkout@v4
       
     - name: Set up Homebrew
+      if: ${{ !env.ACT }}
       uses: Homebrew/actions/setup-homebrew@master
       
     - name: Tap repository
       run: |
         # Remove tap if it already exists to avoid remote mismatch
         brew untap stuffbucket/tap 2>/dev/null || true
-        # Tap from local checkout
-        brew tap stuffbucket/tap $(pwd)
+        # Create tap directory and symlink (avoids git remote issues with bind mounts)
+        TAP_DIR="$(brew --repository)/Library/Taps/stuffbucket"
+        sudo mkdir -p "$TAP_DIR"
+        sudo ln -sfn "$(pwd)" "$TAP_DIR/homebrew-tap"
         
     - name: Test formulas
       run: |

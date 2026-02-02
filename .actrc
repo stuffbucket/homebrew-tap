@@ -1,0 +1,15 @@
+# act configuration - run GitHub Actions locally
+# See: https://nektosact.com/
+
+# Use official Homebrew image (brew pre-installed, much faster)
+-P ubuntu-latest=homebrew/brew:latest
+-P ubuntu-22.04=homebrew/brew:latest
+
+# Architecture for Apple Silicon
+--container-architecture linux/amd64
+
+# Don't pull images if they exist locally
+--pull=false
+
+# Disable Docker socket mounting (required for Colima compatibility)
+--container-daemon-socket=-
