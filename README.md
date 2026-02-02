@@ -4,81 +4,48 @@ Homebrew formulae for stuffbucket projects.
 
 ## Installation
 
-### Quick Install (Recommended)
-
-One command installs everything:
-
 ```bash
-curl -fsSL https://raw.githubusercontent.com/stuffbucket/homebrew-tap/main/install.sh | bash
-```
-
-This installs:
-- Homebrew (if not already installed)
-- Lima
-- VS Code Lima Manager extension (from marketplace)
-
-### Via Homebrew
-
-```bash
-# Install Lima
 brew tap stuffbucket/tap
-brew install stuffbucket/tap/lima
-
-# Install VS Code extension
-code --install-extension stuffbucket-co.lima-manager
+brew install stuffbucket/tap/coop
 ```
-
-Or install the extension in VS Code:
-- Press `Cmd+Shift+X` (Extensions)
-- Search for "Lima Manager"
-- Click Install
-
-### Via macOS Installer Packages
-
-Pre-built macOS `.pkg` installers are available in the `pkgs/` directory:
-
-1. **stuffbucket-homebrew-1.pkg** - Installs Homebrew (install first)
-2. **stuffbucket-lima-2.pkg** - Installs Lima (requires Homebrew)
-
-Then install the VS Code extension:
-```bash
-code --install-extension stuffbucket-co.lima-manager
-```
-
-See [pkgs/README.md](pkgs/README.md) for details.
 
 ## Available Formulas
 
-### lima
-Linux virtual machines with GUI desktop support via VZ.
+### coop
 
-**Repository:** [stuffbucket/lima](https://github.com/stuffbucket/lima)
+AI agent container management with security sandboxing.
 
-### qemu-spice
-QEMU with SPICE protocol support and Apple Silicon optimizations.
+**Repository:** [stuffbucket/coop](https://github.com/stuffbucket/coop)
 
-**Repository:** [QEMU Project](https://www.qemu.org/) (formula based on [stuffbucket/homebrew-qemu-spice](https://github.com/stuffbucket/homebrew-qemu-spice))
+**Installation:**
+```bash
+brew install stuffbucket/tap/coop
+```
 
-### virglrenderer
-Virtual GPU renderer for QEMU (macOS port).
+**Usage:**
+```bash
+coop --help
+```
 
-**Repository:** [akihikodaki/virglrenderer](https://github.com/akihikodaki/virglrenderer) (macOS branch)
+## Development
 
-### libepoxy-egl
-OpenGL function pointer library with EGL support for macOS.
+### Install Git Hooks
 
-**Repository:** [anholt/libepoxy](https://github.com/anholt/libepoxy)
+To run CI tests before pushing:
 
-## VS Code Extension
+```bash
+ln -sf ../../.github/hooks/pre-push .git/hooks/pre-push
+```
 
-The **Lima Manager** VS Code extension is available on the marketplace:
+### Maintenance
 
-**Marketplace:** [stuffbucket-co.lima-manager](https://marketplace.visualstudio.com/items?itemName=stuffbucket-co.lima-manager)
-**Repository:** [stuffbucket/vscode-lima](https://github.com/stuffbucket/vscode-lima)
+Formulas are automatically updated by their source repository release workflows using GoReleaser.
 
-Install with: `code --install-extension stuffbucket-co.lima-manager`
-
-The extension auto-updates through VS Code.
+See the [Makefile](Makefile) for maintenance commands:
+- `make info` - Show current formula versions
+- `make list-formulas` - List all available formulas
+- `make audit` - Run brew audit on all formulas
+- `make ci` - Run CI tests locally with act
 
 ## License
 

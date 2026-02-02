@@ -1,0 +1,2 @@
+# Prevent act/docker from exposing git config with SSH remotes
+.git
