@@ -6,16 +6,19 @@ on:
   pull_request:
     branches: [ main, master ]
 
+permissions:
+  contents: read
+
 jobs:
   test-formulas:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
       
     - name: Set up Homebrew
-      if: ${{ !env.ACT }}
+      if: ${{ env.ACT != 'true' }}
       uses: Homebrew/actions/setup-homebrew@master
       
     - name: Tap repository
