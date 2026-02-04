@@ -5,30 +5,30 @@
 class Coop < Formula
   desc "AI agent container management with security sandboxing"
   homepage "https://github.com/stuffbucket/coop"
-  version "0.1.1"
+  version "0.1.2"
   license "MIT"
 
   depends_on "colima" => "< 0.7.0"
 
   on_macos do
     on_arm do
-      url "https://github.com/stuffbucket/coop/releases/download/v0.1.1/coop_0.1.1_darwin_aarch64.tar.gz"
-      sha256 "ddee91d0c60ba0168799865805b350b30f7341ae4c9db904d9d03e685d352836"
+      url "https://github.com/stuffbucket/coop/releases/download/v0.1.2/coop_0.1.2_darwin_aarch64.tar.gz"
+      sha256 "ff8acc63975c7c00d1dcb4387435bd3fadd8336acb7baea81e78afe2e2962a85"
     end
     on_intel do
-      url "https://github.com/stuffbucket/coop/releases/download/v0.1.1/coop_0.1.1_darwin_x86_64.tar.gz"
-      sha256 "61ee875149dbabb0e9025aef8198228a99d209bd20a482dddd93ca263faa0f16"
+      url "https://github.com/stuffbucket/coop/releases/download/v0.1.2/coop_0.1.2_darwin_x86_64.tar.gz"
+      sha256 "9ce9baccdc8d58be08f579df6f0a3feba00fcdbe0e97754011e125453de4bde1"
     end
   end
 
   on_linux do
     on_arm do
-      url "https://github.com/stuffbucket/coop/releases/download/v0.1.1/coop_0.1.1_linux_aarch64.tar.gz"
-      sha256 "6dea8e26fbff80183006776c38a14ef07c8a11d5330ddde6791db0d2650234cb"
+      url "https://github.com/stuffbucket/coop/releases/download/v0.1.2/coop_0.1.2_linux_aarch64.tar.gz"
+      sha256 "f55140c123f08cfb0b609f0f2ce01a9339d903fe4383cb0e362463371e3a8d1e"
     end
     on_intel do
-      url "https://github.com/stuffbucket/coop/releases/download/v0.1.1/coop_0.1.1_linux_x86_64.tar.gz"
-      sha256 "81b8e91009c088a6a213bca3dbd61e19cda57dfa651ededbb6f0f8d9a557b78d"
+      url "https://github.com/stuffbucket/coop/releases/download/v0.1.2/coop_0.1.2_linux_x86_64.tar.gz"
+      sha256 "beb91b44d14367a8b45c739fe6c1ef36a8ee46148f9ba72ef7e1139835d7fdc0"
     end
   end
 
