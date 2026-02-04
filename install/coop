@@ -1,0 +1,59 @@
+#!/bin/bash
+# Install coop with dependencies
+# Usage:
+#   curl -fsSL https://raw.githubusercontent.com/.../install/coop | bash && \
+#     eval "$(brew shellenv)"
+set -e
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+abort() { echo -e "${RED}Error:${NC} ${1}" >&2; exit 1; }
+info() { echo -e "${GREEN}==>${NC} ${1}"; }
+warn() { echo -e "${YELLOW}Warning:${NC} ${1}"; }
+
+[[ "$OSTYPE" == "darwin"* ]] || abort "macOS only"
+
+# Setup Homebrew PATH
+if [[ -x "/opt/homebrew/bin/brew" ]]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [[ -x "/usr/local/bin/brew" ]]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+fi
+
+command -v brew &>/dev/null || abort "Homebrew required. Install: https://brew.sh"
+
+# Warn if colima is running (upgrade may need restart)
+if command -v colima &>/dev/null && colima status &>/dev/null 2>&1; then
+    if brew outdated colima &>/dev/null 2>&1; then
+        warn "Colima is running and may be upgraded. You might need to restart it afterward."
+    fi
+fi
+
+# Install coop (formula includes colima dependency)
+info "Installing coop..."
+brew install stuffbucket/tap/coop
+
+echo ""
+info "coop installed successfully (•‿•)"
+echo ""
+info "To use immediately, run:"
+echo ""
+echo "  eval \"\$(brew shellenv)\""
+echo ""
+echo "Or add to your shell profile:"
+if [[ -x "/opt/homebrew/bin/brew" ]]; then
+    echo "  echo 'eval \"\$(/opt/homebrew/bin/brew shellenv)\"' >> ~/.zprofile"
+else
+    echo "  echo 'eval \"\$(/usr/local/bin/brew shellenv)\"' >> ~/.zprofile"
+fi
+echo ""
+echo "==> Next steps"
+echo ""
+echo "Start colima:"
+echo "  colima start"
+echo ""
+echo "Then run:"
+echo "  coop --help"
