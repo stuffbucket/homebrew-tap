@@ -1,7 +1,7 @@
 #!/bin/bash
-# Install coop with dependencies
+# Install bladerunner with dependencies
 # Usage:
-#   curl -fsSL https://raw.githubusercontent.com/.../install/coop | bash && \
+#   curl -fsSL https://raw.githubusercontent.com/.../install/bladerunner | bash && \
 #     eval "$(brew shellenv)"
 set -e
 
@@ -25,33 +25,33 @@ fi
 
 command -v brew &>/dev/null || abort "Homebrew required. Install: https://brew.sh"
 
-# Warn if colima is running (upgrade may need restart)
-if command -v colima &>/dev/null && colima status &>/dev/null 2>&1; then
-    if brew outdated colima &>/dev/null 2>&1; then
-        warn "Colima is running and may be upgraded. You might need to restart it afterward."
+# Warn if bladerunner is running (upgrade may need restart)
+if command -v br &>/dev/null && br status &>/dev/null 2>&1; then
+    if brew outdated bladerunner &>/dev/null 2>&1; then
+        warn "Bladerunner is running and may be upgraded. You might need to restart it afterward."
     fi
 fi
 
 # Detect fresh install vs upgrade
 IS_UPGRADE=false
-if brew list stuffbucket/tap/coop &>/dev/null 2>&1; then
+if brew list stuffbucket/tap/bladerunner &>/dev/null 2>&1; then
     IS_UPGRADE=true
 fi
 
-# Install coop (formula includes colima dependency)
+# Install bladerunner (formula includes bladerunner dependency)
 if $IS_UPGRADE; then
-    info "Upgrading coop..."
-    brew upgrade stuffbucket/tap/coop < /dev/null
+    info "Upgrading bladerunner..."
+    brew upgrade stuffbucket/tap/bladerunner < /dev/null
 else
-    info "Installing coop..."
-    brew install stuffbucket/tap/coop < /dev/null
+    info "Installing bladerunner..."
+    brew install stuffbucket/tap/bladerunner < /dev/null
 fi
 
 echo ""
 if $IS_UPGRADE; then
-    info "coop upgraded successfully (•‿•)"
+    info "bladerunner upgraded successfully (•‿•)"
 else
-    info "coop installed successfully (•‿•)"
+    info "Bladerunner installed successfully (•‿•)"
     echo ""
     info "To use immediately, run:"
     echo ""
@@ -67,8 +67,8 @@ fi
 echo ""
 echo "==> Next steps"
 echo ""
-echo "Start colima:"
-echo "  colima start"
+echo "Start bladerunner:"
+echo "  br start"
 echo ""
 echo "Then run:"
-echo "  coop --help"
+echo "  br --help"
