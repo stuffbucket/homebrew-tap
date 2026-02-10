@@ -8,7 +8,7 @@ class Coop < Formula
   version "0.1.3"
   license "MIT"
 
-  depends_on "colima" => "< 0.7.0"
+  depends_on "colima"
 
   on_macos do
     on_arm do
@@ -36,7 +36,21 @@ class Coop < Formula
     bin.install "coop"
   end
 
+  def caveats
+    <<~EOS
+      coop requires colima < 0.7.0. If you have a newer version installed,
+      you may need to downgrade:
+        brew install colima@0.6
+    EOS
+  end
+
   test do
+    # Verify colima version is compatible
+    colima_version = shell_output("#{Formula["colima"].opt_bin}/colima version 2>&1")[/colima version ([\d.]+)/, 1]
+    if colima_version
+      assert Gem::Version.new(colima_version) < Gem::Version.new("0.7.0"),
+             "coop requires colima < 0.7.0, but #{colima_version} is installed"
+    end
     assert_match version.to_s, shell_output("#{bin}/coop --version")
   end
 end
