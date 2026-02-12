@@ -1,0 +1,66 @@
+#!/bin/bash
+# Install claudeme with dependencies
+# Usage:
+#   curl -fsSL https://raw.githubusercontent.com/.../install/claudeme | bash && \
+#     eval "$(brew shellenv)"
+set -e
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+abort() { echo -e "${RED}Error:${NC} ${1}" >&2; exit 1; }
+info() { echo -e "${GREEN}==>${NC} ${1}"; }
+warn() { echo -e "${YELLOW}Warning:${NC} ${1}"; }
+
+[[ "$OSTYPE" == "darwin"* ]] || abort "macOS only"
+
+# Setup Homebrew PATH
+if [[ -x "/opt/homebrew/bin/brew" ]]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [[ -x "/usr/local/bin/brew" ]]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+fi
+
+command -v brew &>/dev/null || abort "Homebrew required. Install: https://brew.sh"
+
+# Detect fresh install vs upgrade
+IS_UPGRADE=false
+if brew list --cask stuffbucket/tap/claudeme &>/dev/null 2>&1; then
+    IS_UPGRADE=true
+fi
+
+# Install claudeme cask
+if $IS_UPGRADE; then
+    info "Upgrading claudeme..."
+    brew upgrade --cask stuffbucket/tap/claudeme < /dev/null
+else
+    info "Installing claudeme..."
+    brew install --cask stuffbucket/tap/claudeme < /dev/null
+fi
+
+echo ""
+if $IS_UPGRADE; then
+    info "claudeme upgraded successfully (•‿•)"
+else
+    info "claudeme installed successfully (•‿•)"
+    echo ""
+    info "To use immediately, run:"
+    echo ""
+    echo "  eval \"\$(brew shellenv)\""
+    echo ""
+    echo "Or add to your shell profile:"
+    if [[ -x "/opt/homebrew/bin/brew" ]]; then
+        echo "  echo 'eval \"\$(/opt/homebrew/bin/brew shellenv)\"' >> ~/.zprofile"
+    else
+        echo "  echo 'eval \"\$(/usr/local/bin/brew shellenv)\"' >> ~/.zprofile"
+    fi
+fi
+echo ""
+echo "==> Next steps"
+echo ""
+echo "To add to Finder toolbar:"
+echo "  1. Hold ⌘ and drag 'Open in Claude Code' from /Applications to Finder's toolbar"
+echo "  2. Navigate to any project folder"
+echo "  3. Click the toolbar icon to open Claude Code there"

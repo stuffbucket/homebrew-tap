@@ -18,12 +18,35 @@ New to Homebrew? [Get started here](HOMEBREW.md).
       <td style="padding: 12px 16px;"><a href="apps/coop.md">coop</a></td>
       <td style="padding: 12px 16px;">AI agent container management with security sandboxing</td>
     </tr>
+    <tr style="border-bottom: 1px solid #d0d7de;">
+      <td style="padding: 12px 16px;"><a href="apps/bladerunner.md">bladerunner</a></td>
+      <td style="padding: 12px 16px;">Bladerunner VM for Incus on macOS</td>
+    </tr>
+    <tr style="border-bottom: 1px solid #d0d7de;">
+      <td style="padding: 12px 16px;"><a href="Casks/claudeme.rb">claudeme</a></td>
+      <td style="padding: 12px 16px;">Finder toolbar app to launch Claude Code in the current directory</td>
+    </tr>
   </tbody>
 </table>
 
 ## Manual Installation
 
-All formulas can be installed directly:
+All formulas have installation scripts that can be used standalone:
+
+### Coop
+
+```bash
+  curl -fsSL https://raw.githubusercontent.com/stuffbucket/homebrew-tap/refs/heads/main/install/coop | bash && eval "$(brew shellenv)"
+```
+
+### Bladerunner
+
+```bash
+  curl -fsSL https://raw.githubusercontent.com/stuffbucket/homebrew-tap/refs/heads/main/install/bladerunner | bash && eval "$(brew shellenv)"
+```
+
+
+All formulas can also be installed directly via brew:
 
 ```bash
 brew tap stuffbucket/tap

@@ -55,3 +55,33 @@ jobs:
         # Create parent directory and empty file for action's post.sh to remove without errors
         sudo mkdir -p /home/linuxbrew/.linuxbrew/Homebrew/Library/Taps/stuffbucket || true
         sudo touch /home/linuxbrew/.linuxbrew/Homebrew/Library/Taps/stuffbucket/homebrew-tap || true
+
+  test-casks:
+    runs-on: macos-latest
+    if: ${{ hashFiles('Casks/*.rb') != '' }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Tap repository
+      run: |
+        brew untap stuffbucket/tap 2>/dev/null || true
+        TAP_DIR="$(brew --repository)/Library/Taps/stuffbucket"
+        mkdir -p "$TAP_DIR"
+        ln -sfn "$(pwd)" "$TAP_DIR/homebrew-tap"
+
+    - name: Test casks
+      run: |
+        for cask in Casks/*.rb; do
+          if [ -f "$cask" ]; then
+            cask_name=$(basename "$cask" .rb)
+            echo "Auditing cask $cask_name..."
+            brew audit --cask stuffbucket/tap/$cask_name || true
+          fi
+        done
+
+    - name: Cleanup tap
+      if: always()
+      run: |
+        brew untap stuffbucket/tap 2>/dev/null || true
