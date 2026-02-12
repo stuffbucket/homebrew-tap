@@ -1,6 +1,6 @@
 cask "claudeme" do
   version "0.1.0"
-  sha256 "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"
+  sha256 "faab51a61421e2a2cc010095b5d997476eed0e4a988aa3676e77f22b356788e3"
 
   url "https://github.com/stuffbucket/claudeme/releases/download/v#{version}/Claudeme-#{version}.zip"
   name "Claudeme"
