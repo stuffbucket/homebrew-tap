@@ -45,6 +45,18 @@ All formulas have installation scripts that can be used standalone:
   curl -fsSL https://raw.githubusercontent.com/stuffbucket/homebrew-tap/refs/heads/main/install/bladerunner | bash && eval "$(brew shellenv)"
 ```
 
+### Claudeme
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/stuffbucket/homebrew-tap/main/install/claudeme | bash
+```
+
+Or install directly via brew:
+
+```bash
+brew install --cask stuffbucket/tap/claudeme
+```
+
 
 All formulas can also be installed directly via brew:
 
