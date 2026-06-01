@@ -4,10 +4,10 @@
 class Bladerunner < Formula
   desc "Standalone Incus VM runner for macOS using Apple Virtualization.framework"
   homepage "https://github.com/stuffbucket/bladerunner"
-  url "https://github.com/stuffbucket/bladerunner/releases/download/v0.1.3/bladerunner_0.1.3_darwin_aarch64.tar.gz"
-  sha256 "ad6be88fd695d806ab594ce9618a26ff8f225e15838c2ce4fb1aff6c1df9eff0"
+  url "https://github.com/stuffbucket/bladerunner/releases/download/v0.2.0/bladerunner_0.2.0_darwin_aarch64.tar.gz"
+  sha256 "34bb7a22cca2938d126920d096e56a6947e403123d51264aa062f311e258888c"
   license "MIT"
-  version "0.1.3"
+  version "0.2.0"
 
   depends_on :macos
   depends_on arch: :arm64
