@@ -3,20 +3,15 @@
 
 # Homebrew formula for bladerunner — SOURCE OF TRUTH.
 #
-# Source-controlled here so formula changes flow through code review. The
-# release workflow (.github/workflows/release-please.yml) renders the
-# PLACEHOLDER_* tokens from the just-published release and syncs a copy into
-# stuffbucket/homebrew-tap (Formula/bladerunner.rb). Do NOT commit real values
-# into the PLACEHOLDER_* slots — they are filled per-release by the sync step,
-# so a future bump is one workflow run.
-#
-#   0.4.0              ← the release version, without leading `v`
-#   fe127cb6bdd2cd4fb5b998d67a08d8d8dc13bb965e4f7e68bc3e3fe19aeaf91c  ← sha256 of the darwin/aarch64 tarball,
-#                                       from the release's checksums.txt
+# Source-controlled so formula changes flow through code review. The release
+# workflow (.github/workflows/release-please.yml) fills the version and the
+# darwin/arm64 sha256 from the just-published release, then syncs a rendered
+# copy into stuffbucket/homebrew-tap (Formula/bladerunner.rb). The two values
+# are the only per-release edits, so a bump is one workflow run.
 class Bladerunner < Formula
   desc "Standalone Incus VM runner for macOS using Apple Virtualization.framework"
   homepage "https://github.com/stuffbucket/bladerunner"
-  version "0.4.0"
+  version "0.4.1"
   license "MIT"
 
   # Apple Silicon only. There is no darwin-x64 artifact in the release.
@@ -25,8 +20,8 @@ class Bladerunner < Formula
 
   on_macos do
     on_arm do
-      url "https://github.com/stuffbucket/bladerunner/releases/download/v0.4.0/bladerunner_0.4.0_darwin_aarch64.tar.gz"
-      sha256 "fe127cb6bdd2cd4fb5b998d67a08d8d8dc13bb965e4f7e68bc3e3fe19aeaf91c"
+      url "https://github.com/stuffbucket/bladerunner/releases/download/v0.4.1/bladerunner_0.4.1_darwin_aarch64.tar.gz"
+      sha256 "06e08ca496b6f65efab37aa62c4bb22966510e3ef48d4c437a89b843c6c0d388"
     end
   end
 
