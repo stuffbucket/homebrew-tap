@@ -11,7 +11,7 @@
 class Bladerunner < Formula
   desc "Standalone Incus VM runner for macOS using Apple Virtualization.framework"
   homepage "https://github.com/stuffbucket/bladerunner"
-  version "0.4.6"
+  version "0.4.7"
   license "MIT"
 
   # Apple Silicon only. There is no darwin-x64 artifact in the release.
@@ -20,8 +20,8 @@ class Bladerunner < Formula
 
   on_macos do
     on_arm do
-      url "https://github.com/stuffbucket/bladerunner/releases/download/v0.4.6/bladerunner_0.4.6_darwin_aarch64.tar.gz"
-      sha256 "415c17431de75b53b80370501e4af074cc50f29d4e765ea37e2317a812b2ea9c"
+      url "https://github.com/stuffbucket/bladerunner/releases/download/v0.4.7/bladerunner_0.4.7_darwin_aarch64.tar.gz"
+      sha256 "0eef0791afd7045fcba4193dd623e248509f706df58d1ded7171bc5e1b13797b"
     end
   end
 
