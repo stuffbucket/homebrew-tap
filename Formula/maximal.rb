@@ -16,7 +16,7 @@
 class Maximal < Formula
   desc "Local proxy that exposes GitHub Copilot as the Anthropic / OpenAI API"
   homepage "https://github.com/stuffbucket/maximal"
-  version "0.4.36"
+  version "0.4.37"
   license "MIT"
 
   # Apple Silicon only. Intel Macs are not a supported target —
@@ -27,7 +27,7 @@ class Maximal < Formula
   on_macos do
     on_arm do
       url "https://github.com/stuffbucket/maximal/releases/download/v#{version}/maximal-v#{version}-darwin-arm64.tar.gz"
-      sha256 "75f9aa3a975d4bcdbc14f0c64096aa964b6f3ead63b18acd29d58615a890fd11"
+      sha256 "04440315c265d9c06acb103e766001bb2559562487afa5597834abbe3e13cd59"
     end
   end
 
