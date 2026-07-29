@@ -5,21 +5,21 @@
 class Vale < Formula
   desc "Simplified Technical English linter and stdio MCP server."
   homepage "https://github.com/stuffbucket/vale"
-  version "0.10.0"
+  version "0.11.0"
   license "MIT"
 
   on_macos do
     if Hardware::CPU.intel?
-      url "https://github.com/stuffbucket/vale/releases/download/v0.10.0/vale_0.10.0_darwin_amd64.tar.gz"
-      sha256 "d03054d9c64ae0551991a56ba48adf74568eafb873cda982de848bb0f732c4e0"
+      url "https://github.com/stuffbucket/vale/releases/download/v0.11.0/vale_0.11.0_darwin_amd64.tar.gz"
+      sha256 "f594e0736c0e6a11c7a4f4d8e81b71713856d4a261f2bcac279b01575165d13d"
 
       define_method(:install) do
         bin.install "vale"
       end
     end
     if Hardware::CPU.arm?
-      url "https://github.com/stuffbucket/vale/releases/download/v0.10.0/vale_0.10.0_darwin_arm64.tar.gz"
-      sha256 "b19d3c1d854e1c3902110391a7ba6c5e0df2b2b3e64489a6bc73587e199ba874"
+      url "https://github.com/stuffbucket/vale/releases/download/v0.11.0/vale_0.11.0_darwin_arm64.tar.gz"
+      sha256 "ba65615f903c6aa44e0d2416ea86acab9192188758b83651f1c928ae4cfa0e82"
 
       define_method(:install) do
         bin.install "vale"
@@ -29,15 +29,15 @@ class Vale < Formula
 
   on_linux do
     if Hardware::CPU.intel? && Hardware::CPU.is_64_bit?
-      url "https://github.com/stuffbucket/vale/releases/download/v0.10.0/vale_0.10.0_linux_amd64.tar.gz"
-      sha256 "159ce82057e6a81de093fbd4c87d175733015066a2e4098914843c8ea8692050"
+      url "https://github.com/stuffbucket/vale/releases/download/v0.11.0/vale_0.11.0_linux_amd64.tar.gz"
+      sha256 "9ddce26d3f7fc0c8b3db6fe04003ff4a7283ccc2cab0a0ed448a9f182d76c666"
       define_method(:install) do
         bin.install "vale"
       end
     end
     if Hardware::CPU.arm? && Hardware::CPU.is_64_bit?
-      url "https://github.com/stuffbucket/vale/releases/download/v0.10.0/vale_0.10.0_linux_arm64.tar.gz"
-      sha256 "3656c12bc5e54cdd6c4ee24578691a10d99d97509cb0ed523a965c1dbb94a84c"
+      url "https://github.com/stuffbucket/vale/releases/download/v0.11.0/vale_0.11.0_linux_arm64.tar.gz"
+      sha256 "5853d67aef104300db516e1fa1d1fdafbe44f54cbd58fa6544af2f5ee102e33a"
       define_method(:install) do
         bin.install "vale"
       end
