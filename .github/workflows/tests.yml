@@ -19,7 +19,7 @@ jobs:
       
     - name: Set up Homebrew
       if: ${{ env.ACT != 'true' }}
-      uses: Homebrew/actions/setup-homebrew@master
+      uses: Homebrew/actions/setup-homebrew@main
       
     - name: Tap repository
       run: |
@@ -29,6 +29,16 @@ jobs:
         TAP_DIR="$(brew --repository)/Library/Taps/stuffbucket"
         sudo mkdir -p "$TAP_DIR"
         sudo ln -sfn "$(pwd)" "$TAP_DIR/homebrew-tap"
+        # Homebrew refuses to LOAD formulae or casks from an untrusted
+        # third-party tap, and a skipped tap is SILENT: it prints "Skipping ...
+        # not trusted" and exits 0, so `brew audit` (already `|| true`) and
+        # `brew search` would pass while exercising nothing.
+        #
+        # setup-homebrew already trusts the tap under test, so on a normal run
+        # this is a no-op that prints "Already trusted". It is here for the ACT
+        # path: that step is guarded by `if: env.ACT != 'true'`, so under
+        # nektos/act nothing else performs the trust.
+        brew trust stuffbucket/tap
         
     - name: Test formulas
       run: |
