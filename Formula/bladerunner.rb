@@ -18,12 +18,22 @@ class Bladerunner < Formula
   depends_on :macos
   depends_on arch: :arm64
 
-  on_macos do
-    on_arm do
-      url "https://github.com/stuffbucket/bladerunner/releases/download/v0.4.8/bladerunner_0.4.8_darwin_aarch64.tar.gz"
-      sha256 "50813cd7e325a9d4f5377ef9d021c8c76b8165beca733531daf056e87415c5c4"
-    end
-  end
+  # url/sha256 deliberately live in the CLASS BODY, not inside
+  # `on_macos do -> on_arm do`. Homebrew validates a tap against every platform
+  # it supports, including arm64_linux, where those blocks do not apply -- which
+  # leaves the formula with no URL at all:
+  #     Invalid formula (arm64_linux): bladerunner: formula requires at least a URL
+  # A tap is all-or-nothing, so one formula failing that way stops the ENTIRE tap
+  # from loading, taking every other formula and cask in it down too.
+  #
+  # `depends_on` above does not prevent this -- loading happens before
+  # dependencies are evaluated -- and it is already what restricts installation
+  # to arm64 macOS, so the platform blocks were redundant as well as harmful.
+  #
+  # Kept in sync with the upstream template this file is rendered from; a future
+  # release will regenerate it in this same shape rather than reverting it.
+  url "https://github.com/stuffbucket/bladerunner/releases/download/v0.4.8/bladerunner_0.4.8_darwin_aarch64.tar.gz"
+  sha256 "50813cd7e325a9d4f5377ef9d021c8c76b8165beca733531daf056e87415c5c4"
 
   def install
     bin.install "br"
