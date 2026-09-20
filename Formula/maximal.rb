@@ -16,7 +16,7 @@
 class Maximal < Formula
   desc "Local proxy that exposes GitHub Copilot as the Anthropic / OpenAI API"
   homepage "https://github.com/stuffbucket/maximal"
-  version "0.4.41"
+  version "0.4.42"
   license "MIT"
 
   # Apple Silicon only. Intel Macs are not a supported target —
@@ -24,22 +24,12 @@ class Maximal < Formula
   depends_on arch: :arm64
   depends_on :macos
 
-  # url/sha256 deliberately live in the CLASS BODY, not inside
-  # `on_macos do -> on_arm do`. Homebrew validates a tap against every platform
-  # it supports, including arm64_linux, where those blocks do not apply -- which
-  # leaves the formula with no URL at all:
-  #     Invalid formula (arm64_linux): maximal: formula requires at least a URL
-  # A tap is all-or-nothing, so one formula failing that way stops the ENTIRE tap
-  # from loading, taking every other formula and cask in it down too.
-  #
-  # `depends_on` above does not prevent this -- loading happens before
-  # dependencies are evaluated -- and it is already what restricts installation
-  # to arm64 macOS, so the platform blocks were redundant as well as harmful.
-  #
-  # Kept in sync with the upstream template this file is rendered from; a future
-  # release will regenerate it in this same shape rather than reverting it.
-  url "https://github.com/stuffbucket/maximal/releases/download/v#{version}/maximal-v#{version}-darwin-arm64.tar.gz"
-  sha256 "ccba0f1dc098f03365deb75171dcbe9ed5490744aa3423084b45a9795fcdb57f"
+  on_macos do
+    on_arm do
+      url "https://github.com/stuffbucket/maximal/releases/download/v#{version}/maximal-v#{version}-darwin-arm64.tar.gz"
+      sha256 "4f0c6ffb6d70144881081693528bc6f425789d266f843bcc47feac0beec9fa40"
+    end
+  end
 
   def install
     bin.install "maximal"
