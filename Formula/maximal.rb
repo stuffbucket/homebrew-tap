@@ -16,7 +16,7 @@
 class Maximal < Formula
   desc "Local proxy that exposes GitHub Copilot as the Anthropic / OpenAI API"
   homepage "https://github.com/stuffbucket/maximal"
-  version "0.4.43"
+  version "0.4.44"
   license "MIT"
 
   # Apple Silicon only. Intel Macs are not a supported target —
@@ -27,7 +27,7 @@ class Maximal < Formula
   on_macos do
     on_arm do
       url "https://github.com/stuffbucket/maximal/releases/download/v#{version}/maximal-v#{version}-darwin-arm64.tar.gz"
-      sha256 "52dcd9ee38a07ccb8dd256808dbd76cf256da5948724845d42f11230a81ba187"
+      sha256 "1cd44ee591df43fe4f12b98f64806f8dac86ef263934b14405afdef2091e415d"
     end
   end
 
@@ -47,7 +47,7 @@ class Maximal < Formula
   test do
     # `debug --json` is the cheapest way to confirm the binary boots
     # and renders structured output. We don't assert keys here — the
-    # release pipeline's smoke job (A6) covers schema.
+    # release pipeline's smoke job covers schema.
     output = shell_output("#{bin}/maximal debug --json")
     assert_match "\"version\":", output
     assert_match "\"git\":",     output
