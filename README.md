@@ -26,6 +26,10 @@ New to Homebrew? [Get started here](HOMEBREW.md).
       <td style="padding: 12px 16px;"><a href="Casks/claudeme.rb">claudeme</a></td>
       <td style="padding: 12px 16px;">Finder toolbar app to launch Claude Code in the current directory</td>
     </tr>
+    <tr style="border-bottom: 1px solid #d0d7de;">
+      <td style="padding: 12px 16px;"><a href="apps/gliner-runner.md">gliner-runner</a></td>
+      <td style="padding: 12px 16px;">Local GLiNER2 inference runner (self-contained ONNX runtime, no Python)</td>
+    </tr>
   </tbody>
 </table>
 
@@ -44,6 +48,14 @@ All formulas have installation scripts that can be used standalone:
 ```bash
   curl -fsSL https://raw.githubusercontent.com/stuffbucket/homebrew-tap/refs/heads/main/install/bladerunner | bash && eval "$(brew shellenv)"
 ```
+
+### Gliner Runner
+
+```bash
+  curl -fsSL https://raw.githubusercontent.com/stuffbucket/homebrew-tap/refs/heads/main/install/gliner-runner | bash && eval "$(brew shellenv)"
+```
+
+Release candidates: `brew install stuffbucket/tap/gliner-runner-rc` (conflicts with the stable formula).
 
 ### Claudeme
 
