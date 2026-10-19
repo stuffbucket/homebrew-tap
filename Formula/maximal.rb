@@ -16,7 +16,7 @@
 class Maximal < Formula
   desc "Local proxy that exposes GitHub Copilot as the Anthropic / OpenAI API"
   homepage "https://github.com/stuffbucket/maximal"
-  version "0.4.44"
+  version "0.4.46"
   license "MIT"
 
   # Apple Silicon only. Intel Macs are not a supported target —
@@ -27,12 +27,13 @@ class Maximal < Formula
   on_macos do
     on_arm do
       url "https://github.com/stuffbucket/maximal/releases/download/v#{version}/maximal-v#{version}-darwin-arm64.tar.gz"
-      sha256 "1cd44ee591df43fe4f12b98f64806f8dac86ef263934b14405afdef2091e415d"
+      sha256 "7386b20df350ef5f6e02bfad78c68d19a8a4565819e3ece454f85d321ee8371c"
     end
   end
 
   def install
     bin.install "maximal"
+    bin.install "maximal-mcp-broker"
   end
 
   service do
@@ -45,9 +46,10 @@ class Maximal < Formula
   end
 
   test do
-    # `debug --json` is the cheapest way to confirm the binary boots
-    # and renders structured output. We don't assert keys here — the
-    # release pipeline's smoke job covers schema.
+    # `debug --json` is the cheapest way to confirm the primary binary boots
+    # and renders structured output. The broker's protocol modes need a live
+    # descriptor or control peer, so only assert that Homebrew installed it.
+    assert_predicate bin/"maximal-mcp-broker", :executable?
     output = shell_output("#{bin}/maximal debug --json")
     assert_match "\"version\":", output
     assert_match "\"git\":",     output
