@@ -9,9 +9,9 @@
 class Woodchipper < Formula
   desc "Reverse-engineering Pi agent harness, skill pack, playbooks, and REA/GLiNER appliance"
   homepage "https://github.com/stuffbucket/woodchipper"
-  url "https://github.com/stuffbucket/woodchipper/releases/download/v1.0.0/woodchipper-v1.0.0.tar.gz"
-  version "1.0.0"
-  sha256 "f01e4b041259a730da9f1d0bc1187c875ba76f64bcc93f25b0526d1154ec19a3"
+  url "https://github.com/stuffbucket/woodchipper/releases/download/v1.0.2/woodchipper-v1.0.2.tar.gz"
+  version "1.0.2"
+  sha256 "66575e50b3914bace61f04ec5c2ee42aa5d3ad5658a341a02c6bf5ea00d39ecf"
   license "Apache-2.0"
 
   livecheck do
