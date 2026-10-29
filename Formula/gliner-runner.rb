@@ -19,19 +19,19 @@ class GlinerRunner < Formula
 
   on_macos do
     on_arm do
-      url "https://github.com/stuffbucket/gliner-runner/releases/download/v0.4.0/gliner-runner-onnx-0.4.0-darwin-arm64.tar.gz"
-      sha256 "79771bc34e20d5561f6a97f8e199a42de0496d1ab4c7f8cb70962ab3cb1e3ce6"
+      url "https://github.com/stuffbucket/gliner-runner/releases/download/v0.5.1/gliner-runner-onnx-0.5.1-darwin-arm64.tar.gz"
+      sha256 "6dc9ee1b440fb45190883ed5f19a74cbd5025114916e7cbeb51d5518eacf9929"
     end
   end
 
   on_linux do
     on_intel do
-      url "https://github.com/stuffbucket/gliner-runner/releases/download/v0.4.0/gliner-runner-onnx-0.4.0-linux-x64.tar.gz"
-      sha256 "1835684c3a2e1e2168d21cf83d33a071945589e6cbc571a226c3d261c08604fe"
+      url "https://github.com/stuffbucket/gliner-runner/releases/download/v0.5.1/gliner-runner-onnx-0.5.1-linux-x64.tar.gz"
+      sha256 "063c47c51c2e885d7f7e5322cd50abf7f5b6a44b6d2e386d7f41f86535a1a7c3"
     end
     on_arm do
-      url "https://github.com/stuffbucket/gliner-runner/releases/download/v0.4.0/gliner-runner-onnx-0.4.0-linux-arm64.tar.gz"
-      sha256 "608d7708c6f794979e245ec895a7c80397b66da309dd37aeb1f854236ddeeac2"
+      url "https://github.com/stuffbucket/gliner-runner/releases/download/v0.5.1/gliner-runner-onnx-0.5.1-linux-arm64.tar.gz"
+      sha256 "8568bb5e02df70d8f00ff531670e5c13f47969f5437eea17579235ca92a08d83"
     end
   end
 
